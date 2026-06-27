@@ -5,42 +5,106 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100;
-    transition: background-color 200ms, color 200ms;
+    @apply font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
-  * {
-    transition: border-color 200ms, background-color 200ms;
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+  }
+
+  code, pre, kbd {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: normal;
+    font-variant-ligatures: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-slate-600 rounded-full;
+    @apply bg-slate-300 dark:bg-slate-700 rounded-full;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-slate-500;
+    @apply bg-slate-400 dark:bg-slate-600;
   }
 
-  /* Override transitions for elements that shouldn't flash */
-  .no-transition * {
-    transition: none !important;
+  * {
+    border-color: theme('colors.slate.200');
+  }
+  .dark * {
+    border-color: theme('colors.slate.800');
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer components {
+  /* Consistent inline code style used throughout the site */
+  .ci {
+    @apply font-mono text-[0.8em] not-italic text-blue-600 dark:text-blue-400
+           bg-blue-50 dark:bg-blue-950/50
+           px-[5px] py-[2px] rounded
+           border border-blue-200/70 dark:border-blue-800/50;
   }
-  .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+
+  /* Section outer wrapper */
+  .section-outer {
+    @apply py-20 lg:py-28 px-6;
+  }
+
+  /* Standard wide container */
+  .section-inner {
+    @apply max-w-5xl mx-auto;
+  }
+
+  /* Narrow prose container */
+  .prose-inner {
+    @apply max-w-3xl mx-auto;
+  }
+
+  /* Section header block */
+  .section-label {
+    @apply text-[11px] font-semibold text-blue-500 uppercase tracking-[0.12em] mb-3;
+  }
+
+  .section-h2 {
+    @apply text-3xl lg:text-[2.25rem] font-bold text-slate-900 dark:text-white mb-4 leading-tight;
+  }
+
+  .section-sub {
+    @apply text-base text-slate-600 dark:text-slate-400 leading-relaxed;
+  }
+
+  /* Standard card */
+  .card {
+    @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm;
+  }
+
+  /* Warning / callout boxes */
+  .callout-warn {
+    @apply flex gap-3 p-4 rounded-lg border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-950/20;
+  }
+
+  .callout-info {
+    @apply flex gap-3 p-4 rounded-lg border border-blue-200 dark:border-blue-800/40 bg-blue-50 dark:bg-blue-950/20;
+  }
+
+  .callout-success {
+    @apply flex gap-3 p-4 rounded-lg border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-950/20;
   }
 }

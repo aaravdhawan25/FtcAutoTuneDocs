@@ -1,41 +1,38 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 
-export function AccordionItem({ question, answer, isOpen, onToggle, index }) {
+export function AccordionItem({ question, answer, isOpen, onToggle }) {
   return (
-    <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+    <div className={`border-b border-slate-200 dark:border-slate-800 last:border-b-0 ${isOpen ? '' : ''}`}>
       <button
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="w-full flex items-center justify-between gap-4 py-4 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset rounded-sm"
       >
-        <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+        <span className={`text-sm font-semibold leading-snug transition-colors ${isOpen ? 'text-blue-600 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
           {question}
         </span>
         <motion.span
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.25, ease: 'easeInOut' }}
-          className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+          animate={{ rotate: isOpen ? 90 : 0 }}
+          transition={{ duration: 0.2, ease: 'easeInOut' }}
+          className={`flex-shrink-0 transition-colors ${isOpen ? 'text-blue-500' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400'}`}
         >
-          <ChevronDown size={18} />
+          <ChevronRight size={16} />
         </motion.span>
       </button>
 
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            key="content"
+            key="body"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+            transition={{ duration: 0.25, ease: [0.04, 0.62, 0.23, 0.98] }}
+            className="overflow-hidden"
           >
-            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
-              {typeof answer === 'string' ? (
-                <p>{answer}</p>
-              ) : (
-                answer
-              )}
+            <div className="pb-5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed space-y-2">
+              {typeof answer === 'string' ? <p>{answer}</p> : answer}
             </div>
           </motion.div>
         )}

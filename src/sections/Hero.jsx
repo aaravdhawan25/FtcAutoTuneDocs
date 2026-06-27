@@ -3,139 +3,100 @@ import { ArrowRight, Github, Zap, Settings, Layers } from 'lucide-react'
 import { ParticleCanvas } from '../components/ParticleCanvas'
 
 const STATS = [
-  {
-    icon: <Layers size={20} />,
-    value: '3 OpModes',
-    sub: 'Position • Velocity • Dual Velocity',
-  },
-  {
-    icon: <Zap size={20} />,
-    value: 'Zero Config Required',
-    sub: 'Works with built-in defaults',
-  },
-  {
-    icon: <Settings size={20} />,
-    value: 'JitPack Ready',
-    sub: 'Like Pedro Pathing',
-  },
+  { icon: <Layers size={18} />, value: '3 OpModes', sub: 'Position · Velocity · Dual' },
+  { icon: <Zap size={18} />, value: 'Zero Config', sub: 'Works with built-in defaults' },
+  { icon: <Settings size={18} />, value: 'JitPack Ready', sub: 'Like Pedro Pathing' },
 ]
 
-const scrollTo = (id) => {
-  const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
-}
+const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-}
+const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }
+const up = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } } }
 
 export function Hero({ id }) {
   return (
     <section
       id={id}
-      className="relative overflow-hidden min-h-[90vh] flex flex-col items-center justify-center text-center"
-      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E3A5F 60%, #0F172A 100%)' }}
+      className="relative overflow-hidden min-h-[88vh] flex flex-col items-center justify-center text-center"
+      style={{ background: 'linear-gradient(160deg, #060b18 0%, #0f1f3d 50%, #060b18 100%)' }}
     >
       <ParticleCanvas />
 
-      {/* Grid dot overlay */}
+      {/* Subtle grid */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none opacity-[0.35]"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(59,130,246,0.15) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
+          backgroundImage: 'radial-gradient(rgba(59,130,246,0.18) 1px, transparent 1px)',
+          backgroundSize: '36px 36px',
         }}
       />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 py-24">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+      {/* Radial glow */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(59,130,246,0.08) 0%, transparent 70%)' }}
+      />
+
+      <div className="relative z-10 max-w-4xl mx-auto px-6 py-24">
+        <motion.div variants={stagger} initial="hidden" animate="visible">
+
           {/* Badge */}
-          <motion.div variants={itemVariants} className="flex justify-center mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium">
-              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-              v0.3.6 — Now on JitPack
+          <motion.div variants={up} className="flex justify-center mb-7">
+            <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full text-[11.5px] font-medium text-blue-300 border border-blue-500/20 bg-blue-500/8">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              v0.3.6 · Now on JitPack
             </span>
           </motion.div>
 
-          {/* Title */}
-          <motion.h1
-            variants={itemVariants}
-            className="text-6xl sm:text-7xl md:text-8xl font-extrabold text-white tracking-tight mb-6"
-          >
+          {/* Heading */}
+          <motion.h1 variants={up} className="text-[3.75rem] sm:text-[5rem] md:text-[6rem] font-extrabold text-white leading-[0.95] tracking-[-0.04em] mb-6">
             FtcAuto<span className="text-blue-400">Tune</span>
           </motion.h1>
 
           {/* Subtitle */}
-          <motion.p
-            variants={itemVariants}
-            className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed mb-10"
-          >
+          <motion.p variants={up} className="text-lg sm:text-xl text-slate-400 max-w-xl mx-auto leading-relaxed mb-10">
             Relay-feedback PID/PIDF auto-tuning for FTC.{' '}
-            <span className="text-slate-100 font-medium">
-              Drop in two files, press start, get your gains.
-            </span>
+            <span className="text-slate-200">Drop in two files, press start, get your gains.</span>
           </motion.p>
 
-          {/* CTA Buttons */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
-          >
+          {/* CTAs */}
+          <motion.div variants={up} className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-20">
             <button
               onClick={() => scrollTo('installation')}
-              className="flex items-center gap-2 px-8 py-3.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-semibold text-base shadow-lg shadow-blue-500/25 hover:shadow-blue-400/30 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-400/25 transition-all duration-200 hover:-translate-y-px"
             >
-              Get Started
-              <ArrowRight size={18} />
+              Get Started <ArrowRight size={15} />
             </button>
-
             <a
               href="https://github.com/aaravdhawan25/FtcAutoTune"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-8 py-3.5 rounded-xl border border-slate-500 hover:border-slate-300 text-slate-300 hover:text-white font-semibold text-base transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              className="inline-flex items-center gap-2 h-11 px-6 rounded-lg border border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/5 text-sm font-semibold transition-all duration-200 hover:-translate-y-px"
             >
-              <Github size={18} />
-              GitHub
+              <Github size={15} /> GitHub
             </a>
           </motion.div>
 
           {/* Stat cards */}
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto"
-          >
+          <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
             {STATS.map(({ icon, value, sub }) => (
               <motion.div
                 key={value}
-                variants={itemVariants}
-                whileHover={{ y: -4, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                className="flex flex-col items-center gap-2 p-6 rounded-2xl border border-slate-700/60 bg-slate-800/40 backdrop-blur-sm"
+                variants={up}
+                whileHover={{ y: -3 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                className="flex flex-col items-center gap-2 p-5 rounded-xl border border-white/6 bg-white/3 backdrop-blur-sm"
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-                  {icon}
-                </div>
-                <p className="text-white font-bold text-base">{value}</p>
-                <p className="text-slate-400 text-xs text-center">{sub}</p>
+                <span className="text-blue-400">{icon}</span>
+                <p className="text-white font-semibold text-sm">{value}</p>
+                <p className="text-slate-500 text-xs">{sub}</p>
               </motion.div>
             ))}
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Fade to page bg */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-slate-50 dark:to-slate-900 pointer-events-none" />
+      {/* Fade to page */}
+      <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-b from-transparent to-slate-50 dark:to-slate-950 pointer-events-none" />
     </section>
   )
 }

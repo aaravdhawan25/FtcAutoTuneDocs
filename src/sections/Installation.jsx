@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { CodeBlock } from '../components/CodeBlock'
-import { CheckCircle, AlertCircle } from 'lucide-react'
+import { CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react'
 
 const REPOS_CODE = `repositories {
     mavenCentral()
@@ -29,85 +29,66 @@ const FILES = [
 
 const STEPS = [
   {
-    num: '1',
+    num: 1,
     title: 'Add Repositories',
-    subtitle: 'In build.dependencies.gradle',
+    sub: 'build.dependencies.gradle',
     content: <CodeBlock code={REPOS_CODE} language="groovy" />,
   },
   {
-    num: '2',
+    num: 2,
     title: 'Add Dependencies',
-    subtitle: 'In build.dependencies.gradle',
+    sub: 'build.dependencies.gradle',
     content: <CodeBlock code={DEPS_CODE} language="groovy" />,
   },
   {
-    num: '3',
+    num: 3,
     title: 'Sync Gradle',
-    subtitle: 'Download the library',
+    sub: 'Download the library',
     content: (
-      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-5 text-sm text-slate-600 dark:text-slate-400">
-        Gradle sync downloads the library.{' '}
-        <code className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded">PIDMaster</code> and{' '}
-        <code className="font-mono text-xs bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded">DualMotorPIDMaster</code>{' '}
-        are now available on the classpath.
+      <div className="rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800/50 px-5 py-4 text-[13.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+        Gradle sync downloads the library. <code className="ci">PIDMaster</code> and <code className="ci">DualMotorPIDMaster</code> are now available on the classpath.
       </div>
     ),
   },
   {
-    num: '4',
-    title: 'Copy 2 Files into Your TeamCode',
-    subtitle: (
+    num: 4,
+    title: 'Copy Files into TeamCode',
+    sub: (
       <>
-        From{' '}
-        <a
-          href="https://github.com/aaravdhawan25/FtcAutoTuneQuickStart"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:text-blue-400 underline underline-offset-2"
-        >
-          FtcAutoTuneQuickStart
-        </a>{' '}
-        into TeamCode/src/main/java/org/firstinspires/ftc/teamcode/
+        From <a href="https://github.com/aaravdhawan25/FtcAutoTuneQuickStart" target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-0.5 text-blue-600 dark:text-blue-400 hover:text-blue-500 underline underline-offset-2">
+          FtcAutoTuneQuickStart<ExternalLink size={10} />
+        </a> into your teamcode package
       </>
     ),
     content: (
       <div className="space-y-3">
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700/80 overflow-hidden bg-white dark:bg-slate-900">
           {FILES.map(({ name, desc }, i) => (
-            <div
-              key={name}
-              className={`flex items-center gap-3 px-5 py-3 text-sm ${
-                i < FILES.length - 1 ? 'border-b border-slate-100 dark:border-slate-700' : ''
-              }`}
-            >
-              <CheckCircle size={15} className="text-emerald-500 flex-shrink-0" />
-              <code className="font-mono text-xs text-blue-600 dark:text-blue-400 flex-shrink-0">{name}</code>
-              <span className="text-slate-500 dark:text-slate-500 hidden sm:inline">—</span>
-              <span className="text-slate-600 dark:text-slate-400 hidden sm:inline">{desc}</span>
+            <div key={name} className={`flex items-center gap-3 px-4 py-3 text-[13px] ${i < FILES.length - 1 ? 'border-b border-slate-100 dark:border-slate-800' : ''}`}>
+              <CheckCircle size={13} className="text-emerald-500 flex-shrink-0" />
+              <code className="font-mono text-[12px] text-blue-600 dark:text-blue-400 flex-shrink-0 min-w-0">{name}</code>
+              <span className="text-slate-400 hidden sm:inline">—</span>
+              <span className="text-slate-500 dark:text-slate-500 hidden sm:inline text-[12.5px]">{desc}</span>
             </div>
           ))}
         </div>
-
-        <div className="flex gap-3 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5">
-          <AlertCircle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            <span className="font-semibold text-amber-600 dark:text-amber-400">Important: </span>
-            <code className="font-mono text-xs bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded">PIDMaster</code> and{' '}
-            <code className="font-mono text-xs bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded">DualMotorPIDMaster</code>{' '}
-            live in the library — do <strong>NOT</strong> copy them. Only the OpModes and TuningConfig go in your TeamCode.
+        <div className="flex gap-2.5 p-3.5 rounded-lg border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-950/20">
+          <AlertTriangle size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
+          <p className="text-[13px] text-slate-700 dark:text-slate-300 leading-relaxed">
+            <code className="ci">PIDMaster</code> and <code className="ci">DualMotorPIDMaster</code> live in the library — do <strong>not</strong> copy them. Only the OpModes and TuningConfig go in TeamCode.
           </p>
         </div>
       </div>
     ),
   },
   {
-    num: '5',
+    num: 5,
     title: 'Sync Again & Deploy',
-    subtitle: 'Push to Robot Controller',
+    sub: 'Push to Robot Controller',
     content: (
-      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-sm text-slate-700 dark:text-slate-300">
-        Sync Gradle one more time, then deploy to the Robot Controller. The three tuner OpModes will appear in the Driver Station under the{' '}
-        <span className="font-semibold">FtcAutoTune</span> group.
+      <div className="rounded-lg border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-950/20 px-5 py-4 text-[13.5px] text-slate-700 dark:text-slate-300 leading-relaxed">
+        Sync Gradle one more time, then deploy to the Robot Controller. The three tuner OpModes will appear under the <strong>FtcAutoTune</strong> group on the Driver Station.
       </div>
     ),
   },
@@ -115,46 +96,38 @@ const STEPS = [
 
 export function Installation({ id }) {
   return (
-    <section id={id} className="py-24 px-6 bg-slate-50 dark:bg-slate-900">
-      <div className="max-w-3xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-14"
-        >
-          <p className="text-sm font-semibold text-blue-500 uppercase tracking-widest mb-2">Setup</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Installation</h2>
-          <p className="text-slate-600 dark:text-slate-400">
-            Five steps to get FtcAutoTune running on your robot.
-          </p>
+    <section id={id} className="section-outer bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800/60">
+      <div className="prose-inner">
+
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.5 }} className="mb-14">
+          <p className="section-label">Setup</p>
+          <h2 className="section-h2">Installation</h2>
+          <p className="section-sub">Five steps to get FtcAutoTune running on your robot.</p>
         </motion.div>
 
         <div className="space-y-10">
-          {STEPS.map(({ num, title, subtitle, content }, i) => (
+          {STEPS.map(({ num, title, sub, content }, i) => (
             <motion.div
               key={num}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.5, delay: i * 0.05 }}
+              transition={{ duration: 0.45, delay: i * 0.04 }}
               className="flex gap-5"
             >
-              {/* Step number */}
-              <div className="flex flex-col items-center gap-0">
-                <div className="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-lg shadow-blue-500/25">
+              {/* Step indicator */}
+              <div className="flex flex-col items-center gap-0 pt-0.5">
+                <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-[13px] font-bold flex-shrink-0 shadow-md shadow-blue-500/20 z-10">
                   {num}
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="w-px flex-1 bg-slate-200 dark:bg-slate-700 mt-2" style={{ minHeight: '1.5rem' }} />
+                  <div className="w-px flex-1 bg-slate-200 dark:bg-slate-800 mt-2 mb-0 min-h-[1rem]" />
                 )}
               </div>
 
-              {/* Content */}
-              <div className="flex-1 pb-2">
-                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-0.5">{title}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-500 mb-4">{subtitle}</p>
+              <div className="flex-1 pb-2 min-w-0">
+                <p className="font-semibold text-[15px] text-slate-900 dark:text-white mb-0.5">{title}</p>
+                <p className="text-[12.5px] text-slate-400 dark:text-slate-500 mb-4">{sub}</p>
                 {content}
               </div>
             </motion.div>

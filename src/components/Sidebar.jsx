@@ -13,6 +13,30 @@ const SECTIONS = [
   { id: 'faq', label: 'FAQ & Troubleshooting' },
 ]
 
+function NavItem({ id, label, isActive, onClick }) {
+  return (
+    <li>
+      <button
+        onClick={() => onClick(id)}
+        className={`relative w-full text-left text-[13px] px-3 py-[7px] rounded-md transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+          isActive
+            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 font-medium'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+        }`}
+      >
+        {isActive && (
+          <motion.span
+            layoutId="sidebar-active"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-blue-500 rounded-r-full"
+            transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+          />
+        )}
+        <span className={isActive ? 'pl-1' : ''}>{label}</span>
+      </button>
+    </li>
+  )
+}
+
 export function Sidebar({ activeSection, isOpen, onNavClick }) {
   const scrollTo = (id) => {
     const el = document.getElementById(id)
@@ -21,54 +45,64 @@ export function Sidebar({ activeSection, isOpen, onNavClick }) {
   }
 
   const content = (
-    <nav aria-label="Page sections" className="px-3 py-6">
-      <p className="px-3 mb-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-widest">
+    <div className="px-4 py-6">
+      <p className="text-[10.5px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] px-3 mb-2">
         Documentation
       </p>
-      <ul className="space-y-0.5">
-        {SECTIONS.map(({ id, label }) => {
-          const isActive = activeSection === id
-          return (
-            <li key={id}>
-              <button
-                onClick={() => scrollTo(id)}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  isActive
-                    ? 'bg-blue-500/10 text-blue-500 dark:text-blue-400'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
+      <nav aria-label="Page sections">
+        <ul className="space-y-0.5">
+          {SECTIONS.map(({ id, label }) => (
+            <NavItem
+              key={id}
+              id={id}
+              label={label}
+              isActive={activeSection === id}
+              onClick={scrollTo}
+            />
+          ))}
+        </ul>
+      </nav>
+
+      {/* Bottom links */}
+      <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <p className="text-[10.5px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em] px-3 mb-2">
+          Resources
+        </p>
+        <ul className="space-y-0.5">
+          {[
+            { label: 'GitHub ↗', href: 'https://github.com/aaravdhawan25/FtcAutoTune' },
+            { label: 'QuickStart ↗', href: 'https://github.com/aaravdhawan25/FtcAutoTuneQuickStart' },
+            { label: 'JitPack ↗', href: 'https://jitpack.io/#aaravdhawan25/FtcAutoTune' },
+          ].map(({ label, href }) => (
+            <li key={label}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-[13px] px-3 py-[7px] rounded-md text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 transition-colors"
               >
-                <span className="flex items-center gap-2">
-                  {isActive && (
-                    <motion.span
-                      layoutId="active-dot"
-                      className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0"
-                    />
-                  )}
-                  {!isActive && <span className="w-1.5 h-1.5 flex-shrink-0" />}
-                  {label}
-                </span>
-              </button>
+                {label}
+              </a>
             </li>
-          )
-        })}
-      </ul>
-    </nav>
+          ))}
+        </ul>
+      </div>
+    </div>
   )
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:block fixed left-0 top-16 bottom-0 w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto z-20">
+      {/* Desktop */}
+      <aside className="hidden lg:flex flex-col fixed left-0 top-14 bottom-0 w-60 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 overflow-y-auto z-20">
         {content}
       </aside>
 
-      {/* Mobile sidebar drawer */}
+      {/* Mobile drawer */}
       <motion.aside
         initial={{ x: '-100%' }}
         animate={{ x: isOpen ? 0 : '-100%' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="lg:hidden fixed left-0 top-16 bottom-0 w-72 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto z-40 shadow-2xl"
+        transition={{ type: 'spring', stiffness: 350, damping: 35 }}
+        className="lg:hidden fixed left-0 top-14 bottom-0 w-64 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 overflow-y-auto z-40 shadow-xl"
         aria-hidden={!isOpen}
       >
         {content}

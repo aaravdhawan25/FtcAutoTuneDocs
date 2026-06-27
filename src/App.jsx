@@ -50,7 +50,7 @@ export default function App() {
 
   return (
     <ThemeContext.Provider value={{ isDark, toggle: () => setIsDark(d => !d) }}>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
         <Navbar
           onMenuClick={() => setSidebarOpen(o => !o)}
         />
@@ -63,14 +63,14 @@ export default function App() {
           />
         )}
 
-        <div className="flex pt-16">
+        <div className="flex pt-14">
           <Sidebar
             activeSection={activeSection}
             isOpen={sidebarOpen}
             onNavClick={handleNavClick}
           />
 
-          <main className="flex-1 lg:ml-64 min-w-0 overflow-x-hidden">
+          <main className="flex-1 lg:ml-60 min-w-0 overflow-x-hidden">
             <Hero id="overview" />
             <HowItWorks id="how-it-works" />
             <Dashboards id="dashboards" />

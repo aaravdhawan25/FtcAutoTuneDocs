@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/FtcAutoTuneDocs/',
+  // Use VITE_BASE env var for GitHub Pages (set to /FtcAutoTuneDocs/ in the Actions workflow)
+  // Vercel and local dev get '/' by default
+  base: process.env.VITE_BASE ?? '/',
   build: {
     rollupOptions: {
       output: {

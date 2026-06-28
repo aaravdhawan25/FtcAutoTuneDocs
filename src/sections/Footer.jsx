@@ -72,7 +72,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-slate-400 dark:text-slate-600">
-          <p>© 2026 Aarav Dhawan · MIT License</p>
+          <p>© 2026 Aarav Dhawan · Apache License 2.0</p>
           <p className="flex items-center gap-1.5">
             Built with React · Vite · Tailwind CSS · Docs by{' '}
             <a

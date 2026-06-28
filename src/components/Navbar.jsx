@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Menu, Github, Sun, Moon, Cpu } from 'lucide-react'
-import { useTheme } from '../context'
+import { Menu, Github, Sun, Moon, Cpu, MessageSquare } from 'lucide-react'
+import { useTheme, useNav } from '../context'
 
 const NAV_LINKS = [
   { label: 'Overview', href: 'overview' },
@@ -13,6 +13,7 @@ const NAV_LINKS = [
 
 export function Navbar({ onMenuClick }) {
   const { isDark, toggle } = useTheme()
+  const { navigate } = useNav()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -58,7 +59,6 @@ export function Navbar({ onMenuClick }) {
             </span>
           </button>
 
-          {/* Version badge */}
           <span className="hidden sm:inline-flex items-center h-5 px-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-medium border border-slate-200 dark:border-slate-700 ml-1">
             v0.3.6
           </span>
@@ -75,6 +75,13 @@ export function Navbar({ onMenuClick }) {
               {label}
             </button>
           ))}
+          <button
+            onClick={() => navigate('forum')}
+            className="px-3 py-1.5 text-[13.5px] font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors duration-150 flex items-center gap-1.5"
+          >
+            <MessageSquare size={13} className="opacity-70" />
+            Forum
+          </button>
         </nav>
 
         {/* Right: GitHub + theme */}

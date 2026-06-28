@@ -16,6 +16,7 @@ import { LibraryStructure } from './sections/LibraryStructure'
 import { FAQ } from './sections/FAQ'
 import { Footer } from './sections/Footer'
 import { CommentsWidget } from './components/CommentsWidget'
+import { AnnouncementBanner } from './components/AnnouncementBanner'
 
 const SECTION_IDS = [
   'overview',
@@ -54,6 +55,7 @@ export default function App() {
     <ThemeContext.Provider value={{ isDark, toggle: () => setIsDark(d => !d) }}>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
         <Analytics />
+        <AnnouncementBanner />
         <Navbar
           onMenuClick={() => setSidebarOpen(o => !o)}
         />
@@ -66,7 +68,7 @@ export default function App() {
           />
         )}
 
-        <div className="flex pt-14">
+        <div className="flex pt-[92px]">
           <Sidebar
             activeSection={activeSection}
             isOpen={sidebarOpen}

@@ -136,7 +136,7 @@ function CommentForm({ onClose, onNewComment }) {
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
           <div>
             <p className="text-[13px] font-semibold text-slate-900 dark:text-white leading-tight">Leave a review</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">How helpful was this documentation?</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">How helpful was this library?</p>
           </div>
           <button
             onClick={onClose}

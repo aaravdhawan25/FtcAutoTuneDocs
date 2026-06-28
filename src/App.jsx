@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { ThemeContext } from './context'
 import { useActiveSection } from './hooks/useActiveSection'
 import { Navbar } from './components/Navbar'
@@ -51,6 +52,7 @@ export default function App() {
   return (
     <ThemeContext.Provider value={{ isDark, toggle: () => setIsDark(d => !d) }}>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+        <Analytics />
         <Navbar
           onMenuClick={() => setSidebarOpen(o => !o)}
         />

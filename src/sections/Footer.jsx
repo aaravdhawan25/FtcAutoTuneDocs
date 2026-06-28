@@ -72,9 +72,18 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-slate-400 dark:text-slate-600">
-          <p>© 2024–2025 Aarav Dhawan · MIT License</p>
+          <p>© 2026 Aarav Dhawan · MIT License</p>
           <p className="flex items-center gap-1.5">
             Built with React · Vite · Tailwind CSS · Docs by{' '}
+            <a
+              href="https://github.com/aaravdhawan25"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors font-medium"
+            >
+              aaravdhawan25
+            </a>
+            {' '}and{' '}
             <a
               href="https://claude.ai"
               target="_blank"

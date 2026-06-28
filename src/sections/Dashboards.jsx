@@ -99,7 +99,7 @@ implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
           className="mt-5 text-[13px] text-slate-500 dark:text-slate-500 px-1">
           <strong className="text-slate-700 dark:text-slate-300">Note:</strong>{' '}
-          FtcAutoTune's <code className="ci">TuningConfig</code> uses <code className="ci">@Config</code> so all tuning constants are live-editable on FTC Dashboard without redeploying.
+          FTC-AutoTune's <code className="ci">TuningConfig</code> uses <code className="ci">@Config</code> so all tuning constants are live-editable on FTC Dashboard without redeploying.
         </motion.p>
       </div>
     </section>

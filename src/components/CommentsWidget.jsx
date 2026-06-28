@@ -223,22 +223,25 @@ export function CommentsWidget() {
       })
   }, [])
 
-  // Spawn a bubble every 5 s, max 3 active at once
+  // Spawn a bubble every 5 s; each comment shown once; stop after 10 s
   useEffect(() => {
     if (!queue.length) return
 
     const spawn = () => {
       setActiveBubbles(prev => {
         if (prev.length >= 3) return prev
-        const comment = queue[queueIdxRef.current % queue.length]
+        const idx = queueIdxRef.current
+        if (idx >= queue.length) return prev // all shown, stop
         queueIdxRef.current++
-        return [...prev, { id: nextId(), comment }]
+        return [...prev, { id: nextId(), comment: queue[idx] }]
       })
     }
 
     spawn() // immediate first bubble
-    const t = setInterval(spawn, 5000)
-    return () => clearInterval(t)
+    const interval = setInterval(spawn, 5000)
+    const cutoff = setTimeout(() => clearInterval(interval), 10_000)
+
+    return () => { clearInterval(interval); clearTimeout(cutoff) }
   }, [queue])
 
   const removeBubble = useCallback(id => {

@@ -41,8 +41,8 @@ const FAQS = [
     a: <p>{ci('TUNE_INTEGRAL_TERM')} defaults to false, selecting the PD-only ZN rule family. For flywheels and velocity loops, kF handles steady-state error, making integral unnecessary and prone to windup. Set {ci('TUNE_INTEGRAL_TERM=true')} for PI/PID/Pessen candidates.</p>,
   },
   {
-    q: 'Why does the library show "FtcAutoTune | Velocity PIDF" on the Driver Station?',
-    a: <p>The library ships built-in OpModes (prefixed "FtcAutoTune |") as a standalone fallback. The QuickStart templates use clean names like "Velocity PIDF Tuner". Both are safe — they use different registered names. The QuickStart versions are preferred since they read from your TuningConfig.</p>,
+    q: 'Why does the library show "FTC-AutoTune | Velocity PIDF" on the Driver Station?',
+    a: <p>The library ships built-in OpModes (prefixed "FTC-AutoTune |") as a standalone fallback. The QuickStart templates use clean names like "Velocity PIDF Tuner". Both are safe — they use different registered names. The QuickStart versions are preferred since they read from your TuningConfig.</p>,
   },
   {
     q: 'Can I use this without FTC Dashboard?',

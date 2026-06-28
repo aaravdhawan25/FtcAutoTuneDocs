@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { AccordionItem } from '../components/AccordionItem'
-import { Github } from 'lucide-react'
+import { Github, MessageSquare } from 'lucide-react'
+import { useNav } from '../context'
 
 const ci = (text) => <code className="ci">{text}</code>
 
@@ -68,6 +69,7 @@ const FAQS = [
 
 export function FAQ({ id }) {
   const [open, setOpen] = useState(null)
+  const { navigate } = useNav()
   return (
     <section id={id} className="section-outer bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800/60">
       <div className="prose-inner">
@@ -88,12 +90,13 @@ export function FAQ({ id }) {
           className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
           <div>
             <p className="font-semibold text-[14px] text-slate-800 dark:text-slate-200 mb-0.5">Still stuck?</p>
-            <p className="text-[13px] text-slate-500 dark:text-slate-500">Open an issue with your TuningConfig values and telemetry output.</p>
+            <p className="text-[13px] text-slate-500 dark:text-slate-500">Post in the community forum with your TuningConfig values and telemetry output.</p>
           </div>
-          <a href="https://github.com/aaravdhawan25/FtcAutoTune/issues" target="_blank" rel="noopener noreferrer"
-            className="flex-shrink-0 inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[13px] font-semibold hover:bg-slate-700 dark:hover:bg-slate-100 transition-colors shadow-sm">
-            <Github size={14} /> Open an Issue
-          </a>
+          <button
+            onClick={() => navigate('forum')}
+            className="flex-shrink-0 inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-[13px] font-semibold transition-colors shadow-sm shadow-blue-500/20">
+            <MessageSquare size={14} /> Open Forum
+          </button>
         </motion.div>
       </div>
     </section>

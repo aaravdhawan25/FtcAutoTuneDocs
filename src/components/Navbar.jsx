@@ -28,7 +28,7 @@ export function Navbar({ onMenuClick }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 h-14 flex items-center transition-all duration-200 ${
+      className={`fixed inset-x-0 top-9 z-40 h-14 flex items-center transition-all duration-200 ${
         scrolled
           ? 'bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-[0_1px_0_0_rgba(0,0,0,0.04)] dark:shadow-none'
           : 'bg-transparent border-b border-transparent'

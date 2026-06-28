@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, MessageCircle, X, Send, Loader2 } from 'lucide-react'
+import { Star, MessageCircle, X, Send, Loader2, ThumbsUp } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 /* ─── helpers ────────────────────────────────────────────────────── */
@@ -100,7 +100,6 @@ function CommentForm({ onClose, onNewComment }) {
     if (!name.trim()) { setErr('Name is required.'); return }
     if (!message.trim()) { setErr('Message is required.'); return }
 
-    // Per-device cooldown (30 min) to reduce spam
     const last = localStorage.getItem('ftcat-comment-ts')
     if (last && Date.now() - parseInt(last, 10) < 1_800_000) {
       setErr('You already left a review recently — thank you!')
@@ -132,7 +131,6 @@ function CommentForm({ onClose, onNewComment }) {
       className="w-72 rounded-2xl overflow-hidden shadow-2xl mb-3"
     >
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
-        {/* header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
           <div>
             <p className="text-[13px] font-semibold text-slate-900 dark:text-white leading-tight">Leave a review</p>
@@ -161,14 +159,10 @@ function CommentForm({ onClose, onNewComment }) {
               maxLength={50}
               className="w-full h-9 px-3 text-[13px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             />
-
             <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Rating
-              </label>
+              <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rating</label>
               <Stars value={rating} onChange={setRating} size={22} />
             </div>
-
             <textarea
               value={message}
               onChange={e => setMessage(e.target.value)}
@@ -177,25 +171,49 @@ function CommentForm({ onClose, onNewComment }) {
               rows={3}
               className="w-full px-3 py-2 text-[13px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-colors leading-relaxed"
             />
-
-            {err && (
-              <p className="text-[12px] text-red-500 dark:text-red-400">{err}</p>
-            )}
-
+            {err && <p className="text-[12px] text-red-500 dark:text-red-400">{err}</p>}
             <button
               type="submit"
               disabled={busy}
               className="w-full h-9 rounded-lg bg-blue-500 hover:bg-blue-400 disabled:opacity-50 text-white text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm shadow-blue-500/20"
             >
-              {busy
-                ? <Loader2 size={14} className="animate-spin" />
-                : <><Send size={13} /> Post Review</>
-              }
+              {busy ? <Loader2 size={14} className="animate-spin" /> : <><Send size={13} /> Post Review</>}
             </button>
           </form>
         )}
       </div>
     </motion.div>
+  )
+}
+
+/* ─── thumbs up button ───────────────────────────────────────────── */
+function ThumbsUpButton({ count, liked, onLike }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      {count > 0 && (
+        <motion.span
+          key={count}
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-[12px] font-semibold tabular-nums text-slate-500 dark:text-slate-400"
+        >
+          {count.toLocaleString()}
+        </motion.span>
+      )}
+      <motion.button
+        whileHover={{ scale: liked ? 1 : 1.1 }}
+        whileTap={{ scale: 0.88 }}
+        onClick={onLike}
+        aria-label="Like this documentation"
+        className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-colors ${
+          liked
+            ? 'bg-blue-500 text-white shadow-blue-500/30'
+            : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-500 shadow-slate-200/60 dark:shadow-slate-900/60'
+        }`}
+      >
+        <ThumbsUp size={16} strokeWidth={2} />
+      </motion.button>
+    </div>
   )
 }
 
@@ -205,9 +223,11 @@ export function CommentsWidget() {
   const [queue, setQueue] = useState([])
   const [activeBubbles, setActiveBubbles] = useState([])
   const [formOpen, setFormOpen] = useState(false)
+  const [likeCount, setLikeCount] = useState(0)
+  const [liked, setLiked] = useState(() => !!localStorage.getItem('ftcat-liked'))
   const queueIdxRef = useRef(0)
 
-  // Fetch on mount
+  // Fetch comments + like count on mount
   useEffect(() => {
     if (!supabase) return
     supabase
@@ -221,26 +241,30 @@ export function CommentsWidget() {
           setQueue(shuffle(data))
         }
       })
+    supabase
+      .from('likes')
+      .select('count')
+      .single()
+      .then(({ data }) => {
+        if (data) setLikeCount(Number(data.count))
+      })
   }, [])
 
-  // Spawn a bubble every 5 s; each comment shown once; stop after 10 s
+  // Spawn bubbles: one per 5 s, each shown once, stop after 10 s
   useEffect(() => {
     if (!queue.length) return
-
     const spawn = () => {
       setActiveBubbles(prev => {
         if (prev.length >= 3) return prev
         const idx = queueIdxRef.current
-        if (idx >= queue.length) return prev // all shown, stop
+        if (idx >= queue.length) return prev
         queueIdxRef.current++
         return [...prev, { id: nextId(), comment: queue[idx] }]
       })
     }
-
-    spawn() // immediate first bubble
+    spawn()
     const interval = setInterval(spawn, 5000)
     const cutoff = setTimeout(() => clearInterval(interval), 10_000)
-
     return () => { clearInterval(interval); clearTimeout(cutoff) }
   }, [queue])
 
@@ -253,15 +277,21 @@ export function CommentsWidget() {
     setQueue(prev => [comment, ...prev])
   }, [])
 
+  const handleLike = useCallback(async () => {
+    if (liked || !supabase) return
+    setLiked(true)
+    setLikeCount(c => c + 1)
+    localStorage.setItem('ftcat-liked', '1')
+    const { data } = await supabase.rpc('increment_likes')
+    if (data != null) setLikeCount(Number(data))
+  }, [liked])
+
   if (!supabase) return null
 
   return (
     <>
-      {/* Floating bubbles — pointer-events none so nothing is blocked */}
-      <div
-        className="fixed z-40 pointer-events-none"
-        style={{ bottom: '5rem', right: '1.5rem' }}
-      >
+      {/* Floating bubbles */}
+      <div className="fixed z-40 pointer-events-none" style={{ bottom: '5rem', right: '1.5rem' }}>
         <div className="relative">
           <AnimatePresence>
             {activeBubbles.map(b => (
@@ -271,42 +301,53 @@ export function CommentsWidget() {
         </div>
       </div>
 
-      {/* UI layer — form + toggle button */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <AnimatePresence>
-          {formOpen && (
-            <CommentForm
-              onClose={() => setFormOpen(false)}
-              onNewComment={handleNewComment}
-            />
-          )}
-        </AnimatePresence>
+      {/* UI layer */}
+      <div className="fixed bottom-6 right-6 z-50" style={{ position: 'fixed' }}>
 
-        {/* Toggle button */}
-        <motion.button
-          whileHover={{ scale: 1.07 }}
-          whileTap={{ scale: 0.94 }}
-          onClick={() => setFormOpen(f => !f)}
-          className="relative h-12 w-12 rounded-full bg-blue-500 hover:bg-blue-400 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center transition-colors"
+        {/* Thumbs up — absolutely positioned above chat button, springs up when form opens */}
+        <motion.div
+          style={{ position: 'absolute', right: 0, bottom: 60 }}
+          animate={{ y: formOpen ? -374 : 0 }}
+          transition={{ type: 'spring', stiffness: 280, damping: 22 }}
         >
-          <AnimatePresence mode="wait">
-            {formOpen
-              ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                  <X size={18} />
-                </motion.span>
-              : <motion.span key="chat" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                  <MessageCircle size={18} />
-                </motion.span>
-            }
+          <ThumbsUpButton count={likeCount} liked={liked} onLike={handleLike} />
+        </motion.div>
+
+        {/* Form + chat toggle */}
+        <div className="flex flex-col items-end">
+          <AnimatePresence>
+            {formOpen && (
+              <CommentForm
+                onClose={() => setFormOpen(false)}
+                onNewComment={handleNewComment}
+              />
+            )}
           </AnimatePresence>
 
-          {/* Comment count badge */}
-          {comments.length > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-400 text-[10px] font-bold text-slate-900 flex items-center justify-center leading-none">
-              {comments.length > 99 ? '99+' : comments.length}
-            </span>
-          )}
-        </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.07 }}
+            whileTap={{ scale: 0.94 }}
+            onClick={() => setFormOpen(f => !f)}
+            className="relative h-12 w-12 rounded-full bg-blue-500 hover:bg-blue-400 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center transition-colors"
+          >
+            <AnimatePresence mode="wait">
+              {formOpen
+                ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <X size={18} />
+                  </motion.span>
+                : <motion.span key="chat" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <MessageCircle size={18} />
+                  </motion.span>
+              }
+            </AnimatePresence>
+
+            {comments.length > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-400 text-[10px] font-bold text-slate-900 flex items-center justify-center leading-none">
+                {comments.length > 99 ? '99+' : comments.length}
+              </span>
+            )}
+          </motion.button>
+        </div>
       </div>
     </>
   )

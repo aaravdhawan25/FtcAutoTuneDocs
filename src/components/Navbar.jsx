@@ -54,7 +54,7 @@ export function Navbar({ onMenuClick }) {
               <Cpu size={14} className="text-white" strokeWidth={2.5} />
             </span>
             <span className="font-semibold text-[15px] text-slate-900 dark:text-white tracking-tight">
-              FtcAutoTune
+              FTC-AutoTune
             </span>
           </button>
 

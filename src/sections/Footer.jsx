@@ -14,7 +14,7 @@ export function Footer() {
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-500">
                 <Cpu size={13} className="text-white" strokeWidth={2.5} />
               </span>
-              <span className="font-semibold text-[15px] text-slate-900 dark:text-white">FtcAutoTune</span>
+              <span className="font-semibold text-[15px] text-slate-900 dark:text-white">FTC-AutoTune</span>
             </div>
             <p className="text-[13px] text-slate-500 dark:text-slate-500 leading-relaxed mb-3">
               Relay-feedback PID/PIDF auto-tuning for FIRST Tech Challenge robotics.
@@ -30,7 +30,7 @@ export function Footer() {
             <p className="text-[10.5px] font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-[0.12em] mb-4">Resources</p>
             <ul className="space-y-2.5">
               {[
-                { label: 'FtcAutoTune on GitHub', href: 'https://github.com/aaravdhawan25/FtcAutoTune' },
+                { label: 'FTC-AutoTune on GitHub', href: 'https://github.com/aaravdhawan25/FtcAutoTune' },
                 { label: 'QuickStart Repo', href: 'https://github.com/aaravdhawan25/FtcAutoTuneQuickStart' },
                 { label: 'JitPack Build Page', href: 'https://jitpack.io/#aaravdhawan25/FtcAutoTune' },
                 { label: 'FTC Dashboard', href: 'https://acmerobotics.github.io/ftc-dashboard/' },

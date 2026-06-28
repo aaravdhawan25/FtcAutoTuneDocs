@@ -69,7 +69,7 @@ export function LibraryStructure({ id }) {
             <div className="px-4 py-3 border-t border-emerald-100 dark:border-emerald-800/20 bg-emerald-50/30 dark:bg-emerald-950/10">
               <a href="https://github.com/aaravdhawan25/FtcAutoTuneQuickStart" target="_blank" rel="noopener noreferrer"
                 className="text-[12.5px] text-emerald-700 dark:text-emerald-400 hover:text-emerald-600 underline underline-offset-2">
-                FtcAutoTuneQuickStart on GitHub ↗
+                FTC-AutoTune QuickStart on GitHub ↗
               </a>
             </div>
           </motion.div>

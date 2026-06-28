@@ -19,7 +19,7 @@ export function Hero({ id }) {
       height="min-h-[88vh]"
       className="relative"
       overlayGradient="linear-gradient(180deg, #000000bb 0%, #00000055 40%, transparent 80%)"
-      ariaLabel="FtcAutoTune hero background"
+      ariaLabel="FTC-AutoTune hero background"
     >
       {/* Subtle dot grid on top of the shader */}
       <div
@@ -60,7 +60,7 @@ export function Hero({ id }) {
             className="text-[3.75rem] sm:text-[5rem] md:text-[6rem] font-extrabold text-white leading-[0.95] tracking-[-0.04em] mb-6"
             style={{ fontFamily: "'Space Grotesk', ui-sans-serif, system-ui, sans-serif" }}
           >
-            FtcAuto<span className="text-blue-400">Tune</span>
+            FTC-Auto<span className="text-blue-400">Tune</span>
           </motion.h1>
 
           {/* Subtitle */}

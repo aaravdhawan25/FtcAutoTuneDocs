@@ -50,7 +50,7 @@ function OpModeTag({ name }) {
     <div className="inline-flex items-center gap-2 h-7 px-3 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[12px] font-mono text-slate-600 dark:text-slate-400 mb-5">
       OpMode: <span className="text-blue-600 dark:text-blue-400">{name}</span>
       <span className="text-slate-400">· group</span>
-      <span className="text-emerald-600 dark:text-emerald-400">FtcAutoTune</span>
+      <span className="text-emerald-600 dark:text-emerald-400">FTC-AutoTune</span>
     </div>
   )
 }

@@ -10,7 +10,7 @@ const REPOS_CODE = `repositories {
 }`
 
 const DEPS_CODE = `dependencies {
-    // FtcAutoTune — relay-feedback PID/PIDF auto tuner
+    // FTC-AutoTune — relay-feedback PID/PIDF auto tuner
     implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-core:v0.3.6'
     implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-ftc:v0.3.6'
 
@@ -57,7 +57,7 @@ const STEPS = [
       <>
         From <a href="https://github.com/aaravdhawan25/FtcAutoTuneQuickStart" target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-0.5 text-blue-600 dark:text-blue-400 hover:text-blue-500 underline underline-offset-2">
-          FtcAutoTuneQuickStart<ExternalLink size={10} />
+          FTC-AutoTune QuickStart<ExternalLink size={10} />
         </a> into your teamcode package
       </>
     ),
@@ -88,7 +88,7 @@ const STEPS = [
     sub: 'Push to Robot Controller',
     content: (
       <div className="rounded-lg border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-950/20 px-5 py-4 text-[13.5px] text-slate-700 dark:text-slate-300 leading-relaxed">
-        Sync Gradle one more time, then deploy to the Robot Controller. The three tuner OpModes will appear under the <strong>FtcAutoTune</strong> group on the Driver Station.
+        Sync Gradle one more time, then deploy to the Robot Controller. The three tuner OpModes will appear under the <strong>FTC-AutoTune</strong> group on the Driver Station.
       </div>
     ),
   },
@@ -102,7 +102,7 @@ export function Installation({ id }) {
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.5 }} className="mb-14">
           <p className="section-label">Setup</p>
           <h2 className="section-h2">Installation</h2>
-          <p className="section-sub">Five steps to get FtcAutoTune running on your robot.</p>
+          <p className="section-sub">Five steps to get FTC-AutoTune running on your robot.</p>
         </motion.div>
 
         <div className="space-y-10">

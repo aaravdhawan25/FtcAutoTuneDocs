@@ -15,6 +15,7 @@ import { UsingGains } from './sections/UsingGains'
 import { LibraryStructure } from './sections/LibraryStructure'
 import { FAQ } from './sections/FAQ'
 import { Footer } from './sections/Footer'
+import { CommentsWidget } from './components/CommentsWidget'
 
 const SECTION_IDS = [
   'overview',
@@ -87,6 +88,9 @@ export default function App() {
           </main>
         </div>
       </div>
+
+      {/* Floating comments widget — fixed, bottom-right */}
+      <CommentsWidget />
     </ThemeContext.Provider>
   )
 }

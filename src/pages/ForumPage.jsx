@@ -1,14 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ChevronUp, Plus, X, Loader2, MessageSquare, Bug,
-  Lightbulb, HelpCircle, ArrowLeft, Send, ChevronDown, CornerDownRight,
-} from 'lucide-react'
+import { ChevronUp, Plus, X, Loader2, MessageSquare, Bug, Lightbulb, HelpCircle, ArrowLeft, Star, EyeOff, Eye } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { profanityError } from '../lib/profanityFilter'
 import { AnnouncementBanner } from '../components/AnnouncementBanner'
 import { useNav } from '../context'
 
-/* ─── helpers ─────────────────────────────────────────────────────── */
 function timeAgo(ts) {
   const s = Math.floor((Date.now() - new Date(ts)) / 1000)
   if (s < 60) return 'just now'
@@ -17,53 +14,85 @@ function timeAgo(ts) {
   return `${Math.floor(s / 86400)}d ago`
 }
 
-function initials(name) {
-  return name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase()
-}
-
 const CATEGORY_META = {
   Bug:      { icon: Bug,        cls: 'bg-red-500/10 text-red-400 border-red-500/20' },
   Question: { icon: HelpCircle, cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
   Tip:      { icon: Lightbulb,  cls: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
 }
-const AVATAR_COLORS = [
-  'bg-blue-500/20 text-blue-400',
-  'bg-violet-500/20 text-violet-400',
-  'bg-emerald-500/20 text-emerald-400',
-  'bg-amber-500/20 text-amber-400',
-  'bg-rose-500/20 text-rose-400',
-]
-function avatarColor(name) {
-  let h = 0
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
-  return AVATAR_COLORS[h % AVATAR_COLORS.length]
-}
-
 const FILTERS = ['All', 'Bug', 'Question', 'Tip']
 
-/* ─── avatar ──────────────────────────────────────────────────────── */
-function Avatar({ name, size = 'sm' }) {
-  const sz = size === 'sm' ? 'w-7 h-7 text-[11px]' : 'w-8 h-8 text-[12px]'
-  return (
-    <div className={`${sz} rounded-full flex items-center justify-center font-semibold flex-shrink-0 ${avatarColor(name)}`}>
-      {initials(name)}
-    </div>
-  )
-}
-
-/* ─── category badge ──────────────────────────────────────────────── */
 function CategoryBadge({ category }) {
   const meta = CATEGORY_META[category] || CATEGORY_META.Question
   const Icon = meta.icon
   return (
-    <span className={`inline-flex items-center gap-1 h-[18px] px-2 rounded-full text-[11px] font-semibold border flex-shrink-0 ${meta.cls}`}>
+    <span className={`inline-flex items-center gap-1 h-[18px] px-2 rounded-full text-[11px] font-semibold border ${meta.cls}`}>
       <Icon size={10} strokeWidth={2.5} />
       {category}
     </span>
   )
 }
 
-/* ─── new post form ───────────────────────────────────────────────── */
+function StarRating({ postId, avgRating, ratingCount, onRated }) {
+  const [hovered, setHovered] = useState(0)
+  const [userRating, setUserRating] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('ftcat-ratings') || '{}')[postId] ?? 0 }
+    catch { return 0 }
+  })
+  const [busy, setBusy] = useState(false)
+
+  const rated = userRating > 0
+  const display = hovered || userRating || Math.round(avgRating) || 0
+
+  const handleRate = async (stars) => {
+    if (rated || busy) return
+    setBusy(true)
+    setUserRating(stars)
+    try {
+      const prev = JSON.parse(localStorage.getItem('ftcat-ratings') || '{}')
+      localStorage.setItem('ftcat-ratings', JSON.stringify({ ...prev, [postId]: stars }))
+    } catch {}
+    if (supabase) {
+      await supabase.from('post_ratings').insert({ post_id: postId, rating: stars })
+    }
+    setBusy(false)
+    onRated?.(postId, stars)
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 flex-shrink-0">
+      <div className="flex items-center gap-0.5" onMouseLeave={() => setHovered(0)}>
+        {[1, 2, 3, 4, 5].map(n => (
+          <button
+            key={n}
+            disabled={rated || busy}
+            onClick={() => handleRate(n)}
+            onMouseEnter={() => !rated && setHovered(n)}
+            className="disabled:cursor-default focus:outline-none"
+            aria-label={`Rate ${n} star${n > 1 ? 's' : ''}`}
+          >
+            <Star
+              size={13}
+              className={`transition-colors ${
+                n <= display
+                  ? 'fill-amber-400 text-amber-400'
+                  : 'fill-transparent text-slate-300 dark:text-slate-700'
+              }`}
+            />
+          </button>
+        ))}
+      </div>
+      {ratingCount > 0 && (
+        <span className="text-[11px] text-slate-400 dark:text-slate-600 tabular-nums">
+          {avgRating.toFixed(1)} ({ratingCount})
+        </span>
+      )}
+      {ratingCount === 0 && !rated && (
+        <span className="text-[11px] text-slate-400 dark:text-slate-600">Rate</span>
+      )}
+    </div>
+  )
+}
+
 function NewPostForm({ onClose, onCreated }) {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
@@ -78,6 +107,9 @@ function NewPostForm({ onClose, onCreated }) {
     if (!title.trim()) { setErr('Title is required.'); return }
     if (!body.trim())  { setErr('Description is required.'); return }
     if (!author.trim()) { setErr('Name is required.'); return }
+
+    const pErr = profanityError({ title: title.trim(), description: body.trim(), name: author.trim() })
+    if (pErr) { setErr(pErr); return }
 
     setBusy(true)
     const { data, error } = await supabase
@@ -154,251 +186,74 @@ function NewPostForm({ onClose, onCreated }) {
   )
 }
 
-/* ─── reply form ──────────────────────────────────────────────────── */
-function ReplyForm({ postId, onReplied }) {
-  const [author, setAuthor] = useState('')
-  const [body, setBody] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [err, setErr] = useState('')
-
-  const submit = async (e) => {
-    e.preventDefault()
-    setErr('')
-    if (!author.trim()) { setErr('Name required.'); return }
-    if (!body.trim())   { setErr('Reply required.'); return }
-    setBusy(true)
-    const { data, error } = await supabase
-      .from('forum_replies')
-      .insert({ post_id: postId, author: author.trim().slice(0, 50), body: body.trim().slice(0, 500) })
-      .select()
-      .single()
-    setBusy(false)
-    if (error) { setErr('Could not post reply.'); return }
-    onReplied(data)
-    setBody('')
-  }
-
-  return (
-    <form onSubmit={submit} className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
-      <div className="flex gap-2">
-        <input
-          value={author}
-          onChange={e => setAuthor(e.target.value)}
-          placeholder="Your name"
-          maxLength={50}
-          className="w-36 h-8 px-3 text-[12px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-        />
-      </div>
-      <div className="flex gap-2">
-        <textarea
-          value={body}
-          onChange={e => setBody(e.target.value)}
-          placeholder="Write a reply…"
-          maxLength={500}
-          rows={2}
-          className="flex-1 px-3 py-2 text-[12px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-colors leading-relaxed"
-        />
-        <button
-          type="submit"
-          disabled={busy}
-          className="self-end h-8 px-3 rounded-lg bg-blue-500 hover:bg-blue-400 disabled:opacity-50 text-white text-[12px] font-semibold flex items-center gap-1.5 transition-colors flex-shrink-0"
-        >
-          {busy ? <Loader2 size={12} className="animate-spin" /> : <><Send size={12} /> Reply</>}
-        </button>
-      </div>
-      {err && <p className="text-[11px] text-red-500 dark:text-red-400">{err}</p>}
-    </form>
-  )
-}
-
-/* ─── thread view (expanded inside post card) ─────────────────────── */
-function ThreadView({ post, onClose }) {
-  const [replies, setReplies] = useState([])
-  const [loading, setLoading] = useState(true)
-  const bottomRef = useRef(null)
-
-  useEffect(() => {
-    if (!supabase) { setLoading(false); return }
-    supabase
-      .from('forum_replies')
-      .select('*')
-      .eq('post_id', post.id)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => {
-        setReplies(data || [])
-        setLoading(false)
-      })
-  }, [post.id])
-
-  const handleReplied = useCallback(reply => {
-    setReplies(prev => [...prev, reply])
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80)
-  }, [])
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: 'auto' }}
-      exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      style={{ overflow: 'hidden' }}
-    >
-      <div className="ml-12 mt-3 mb-1">
-        {/* Full body */}
-        <p className="text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap mb-4 border-l-2 border-slate-200 dark:border-slate-700 pl-3">
-          {post.body}
-        </p>
-
-        {/* Replies */}
-        {loading ? (
-          <div className="flex items-center gap-2 text-[12px] text-slate-400 py-2">
-            <Loader2 size={12} className="animate-spin" /> Loading replies…
-          </div>
-        ) : replies.length === 0 ? (
-          <p className="text-[12px] text-slate-400 dark:text-slate-600 py-1">No replies yet. Be the first to respond.</p>
-        ) : (
-          <div className="space-y-3 mb-1">
-            {replies.map(r => (
-              <div key={r.id} className="flex gap-2.5">
-                <CornerDownRight size={12} className="text-slate-300 dark:text-slate-700 mt-1 flex-shrink-0" />
-                <Avatar name={r.author} size="sm" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2 mb-0.5">
-                    <span className="text-[12px] font-semibold text-slate-800 dark:text-slate-200">{r.author}</span>
-                    <span className="text-[11px] text-slate-400 dark:text-slate-600">{timeAgo(r.created_at)}</span>
-                  </div>
-                  <p className="text-[12.5px] text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap">{r.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <ReplyForm postId={post.id} onReplied={handleReplied} />
-        <div ref={bottomRef} />
-
-        <button
-          onClick={onClose}
-          className="mt-3 text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex items-center gap-1"
-        >
-          <ChevronDown size={11} /> Collapse thread
-        </button>
-      </div>
-    </motion.div>
-  )
-}
-
-/* ─── post card ───────────────────────────────────────────────────── */
-function PostCard({ post, replyCount, onReplyCountIncrease }) {
+function PostCard({ post, avgRating, ratingCount, onRated }) {
   const [upvoted, setUpvoted] = useState(() => {
     try { return JSON.parse(localStorage.getItem('ftcat-upvoted') || '{}')[post.id] ?? false }
     catch { return false }
   })
-  const [voteCount, setVoteCount] = useState(post.upvotes)
-  const [threadOpen, setThreadOpen] = useState(false)
-  const [localReplyCount, setLocalReplyCount] = useState(replyCount)
+  const [count, setCount] = useState(post.upvotes)
 
-  const handleUpvote = async (e) => {
-    e.stopPropagation()
+  const handleUpvote = async () => {
     if (upvoted) return
     setUpvoted(true)
-    setVoteCount(c => c + 1)
+    setCount(c => c + 1)
     try {
       const prev = JSON.parse(localStorage.getItem('ftcat-upvoted') || '{}')
       localStorage.setItem('ftcat-upvoted', JSON.stringify({ ...prev, [post.id]: true }))
     } catch {}
     if (supabase) {
       const { data } = await supabase.rpc('upvote_post', { post_id: post.id })
-      if (data != null) setVoteCount(Number(data))
+      if (data != null) setCount(Number(data))
     }
   }
-
-  const handleReplied = useCallback(() => {
-    setLocalReplyCount(c => c + 1)
-    onReplyCountIncrease?.(post.id)
-  }, [post.id, onReplyCountIncrease])
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 last:border-b-0"
+      className="flex gap-4 px-5 py-4 border-b border-slate-100 dark:border-slate-800 last:border-b-0"
     >
-      <div className="flex gap-4">
-        {/* Upvote column */}
-        <div className="flex flex-col items-center gap-1 flex-shrink-0 pt-0.5">
-          <button
-            onClick={handleUpvote}
-            aria-label="Upvote"
-            className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
-              upvoted
-                ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
-                : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:border-blue-400/50 hover:text-blue-400 hover:bg-blue-500/5'
-            }`}
-          >
-            <ChevronUp size={15} strokeWidth={2.5} />
-          </button>
-          <span className={`text-[12px] font-semibold tabular-nums ${upvoted ? 'text-blue-400' : 'text-slate-400 dark:text-slate-500'}`}>
-            {voteCount}
-          </span>
+      <div className="flex flex-col items-center gap-1 flex-shrink-0 pt-0.5">
+        <button
+          onClick={handleUpvote}
+          aria-label="Upvote"
+          className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+            upvoted
+              ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+              : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:border-blue-400/50 hover:text-blue-400 hover:bg-blue-500/5'
+          }`}
+        >
+          <ChevronUp size={15} strokeWidth={2.5} />
+        </button>
+        <span className={`text-[12px] font-semibold tabular-nums ${upvoted ? 'text-blue-400' : 'text-slate-400 dark:text-slate-500'}`}>
+          {count}
+        </span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+          <CategoryBadge category={post.category} />
+          <span className="text-[14px] font-semibold text-slate-900 dark:text-white leading-snug">{post.title}</span>
         </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <CategoryBadge category={post.category} />
-            <span className="text-[14px] font-semibold text-slate-900 dark:text-white leading-snug">{post.title}</span>
-          </div>
-
-          {/* Preview body — 3 lines, only shown when thread is collapsed */}
-          {!threadOpen && (
-            <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 mb-2">
-              {post.body}
-            </p>
-          )}
-
-          {/* Footer row */}
-          <div className="flex items-center gap-3 flex-wrap mt-1">
-            <div className="flex items-center gap-2">
-              <Avatar name={post.author} size="sm" />
-              <span className="text-[11px] text-slate-400 dark:text-slate-500">{post.author} · {timeAgo(post.created_at)}</span>
-            </div>
-            <button
-              onClick={() => setThreadOpen(o => !o)}
-              className={`flex items-center gap-1.5 text-[11.5px] font-medium transition-colors ml-auto ${
-                threadOpen
-                  ? 'text-blue-400 hover:text-blue-300'
-                  : 'text-slate-400 dark:text-slate-500 hover:text-blue-400'
-              }`}
-            >
-              <MessageSquare size={12} />
-              {threadOpen
-                ? 'Hide thread'
-                : localReplyCount > 0
-                  ? `View thread (${localReplyCount} ${localReplyCount === 1 ? 'reply' : 'replies'})`
-                  : 'Start a thread'
-              }
-            </button>
-          </div>
+        <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 mb-2">
+          {post.body}
+        </p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <p className="text-[11px] text-slate-400 dark:text-slate-600">
+            {post.author} · {timeAgo(post.created_at)}
+          </p>
+          <StarRating
+            postId={post.id}
+            avgRating={avgRating}
+            ratingCount={ratingCount}
+            onRated={onRated}
+          />
         </div>
       </div>
-
-      {/* Inline thread — expands below */}
-      <AnimatePresence>
-        {threadOpen && (
-          <ThreadView
-            post={post}
-            onClose={() => setThreadOpen(false)}
-            onReplied={handleReplied}
-          />
-        )}
-      </AnimatePresence>
     </motion.div>
   )
 }
 
-/* ─── empty state ─────────────────────────────────────────────────── */
 function EmptyState({ filter, onNew }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
@@ -419,25 +274,33 @@ function EmptyState({ filter, onNew }) {
   )
 }
 
-/* ─── main page ───────────────────────────────────────────────────── */
 export function ForumPage() {
   const { navigate } = useNav()
   const [posts, setPosts] = useState([])
-  const [replyCounts, setReplyCounts] = useState({})
+  const [ratings, setRatings] = useState({})
   const [filter, setFilter] = useState('All')
   const [formOpen, setFormOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [showHidden, setShowHidden] = useState(false)
 
   useEffect(() => {
     if (!supabase) { setLoading(false); return }
     Promise.all([
       supabase.from('forum_posts').select('*').order('upvotes', { ascending: false }).order('created_at', { ascending: false }),
-      supabase.from('forum_replies').select('post_id'),
-    ]).then(([{ data: posts }, { data: replies }]) => {
-      setPosts(posts || [])
-      const counts = {}
-      for (const r of replies || []) counts[r.post_id] = (counts[r.post_id] || 0) + 1
-      setReplyCounts(counts)
+      supabase.from('post_ratings').select('post_id, rating'),
+    ]).then(([{ data: postsData }, { data: ratingsData }]) => {
+      setPosts(postsData || [])
+      const map = {}
+      for (const r of ratingsData || []) {
+        if (!map[r.post_id]) map[r.post_id] = { sum: 0, count: 0 }
+        map[r.post_id].sum += r.rating
+        map[r.post_id].count += 1
+      }
+      const computed = {}
+      for (const [id, { sum, count }] of Object.entries(map)) {
+        computed[id] = { avg: sum / count, count }
+      }
+      setRatings(computed)
       setLoading(false)
     })
   }, [])
@@ -446,39 +309,43 @@ export function ForumPage() {
     setPosts(prev => [post, ...prev])
   }, [])
 
-  const handleReplyCountIncrease = useCallback(postId => {
-    setReplyCounts(prev => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }))
+  const handleRated = useCallback((postId, newRating) => {
+    setRatings(prev => {
+      const existing = prev[postId] || { avg: 0, count: 0 }
+      const newCount = existing.count + 1
+      const newAvg = (existing.avg * existing.count + newRating) / newCount
+      return { ...prev, [postId]: { avg: newAvg, count: newCount } }
+    })
   }, [])
 
-  const visible = filter === 'All' ? posts : posts.filter(p => p.category === filter)
+  const filtered = filter === 'All' ? posts : posts.filter(p => p.category === filter)
+  const visible = filtered.filter(p => { const r = ratings[p.id]; return !r || r.avg >= 3 })
+  const hidden  = filtered.filter(p => { const r = ratings[p.id]; return r && r.avg < 3 })
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <AnnouncementBanner />
 
-      {/* Top bar */}
       <div className="fixed inset-x-0 top-9 z-40 h-14 flex items-center border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl">
         <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 flex items-center gap-4">
           <button
             onClick={() => navigate('docs')}
             className="flex items-center gap-1.5 text-[13px] text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
           >
-            <ArrowLeft size={14} /> Back to docs
+            <ArrowLeft size={14} />
+            Back to docs
           </button>
           <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
           <span className="text-[14px] font-semibold text-slate-900 dark:text-white">Community Forum</span>
         </div>
       </div>
 
-      {/* Content */}
       <div className="pt-[92px] max-w-3xl mx-auto px-4 sm:px-6 py-10">
-
-        {/* Header */}
         <div className="flex items-start justify-between mb-8">
           <div>
             <p className="section-label mb-2">Community</p>
             <h1 className="text-[28px] font-bold text-slate-900 dark:text-white tracking-tight mb-2">Forum</h1>
-            <p className="text-[14px] text-slate-500 dark:text-slate-400">Post bugs, questions, and tips. Click any post to start or view its thread.</p>
+            <p className="text-[14px] text-slate-500 dark:text-slate-400">Post bugs, questions, and tuning tips. Rate posts to help surface the best ones.</p>
           </div>
           <button
             onClick={() => setFormOpen(f => !f)}
@@ -489,14 +356,15 @@ export function ForumPage() {
           </button>
         </div>
 
-        {/* New post form */}
         <AnimatePresence>
           {formOpen && (
-            <NewPostForm onClose={() => setFormOpen(false)} onCreated={handleCreated} />
+            <NewPostForm
+              onClose={() => setFormOpen(false)}
+              onCreated={handleCreated}
+            />
           )}
         </AnimatePresence>
 
-        {/* Filter pills */}
         <div className="flex gap-2 mb-4 flex-wrap">
           {FILTERS.map(f => (
             <button
@@ -516,27 +384,65 @@ export function ForumPage() {
           </span>
         </div>
 
-        {/* Posts list */}
         <div className="rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
           {loading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 size={20} className="animate-spin text-slate-400" />
             </div>
-          ) : visible.length === 0 ? (
+          ) : visible.length === 0 && hidden.length === 0 ? (
             <EmptyState filter={filter} onNew={() => setFormOpen(true)} />
+          ) : visible.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center px-6">
+              <EyeOff size={28} className="text-slate-300 dark:text-slate-700 mb-3" />
+              <p className="text-[13px] text-slate-500 dark:text-slate-400">All posts here are hidden due to low ratings.</p>
+            </div>
           ) : (
             <AnimatePresence initial={false}>
               {visible.map(post => (
                 <PostCard
                   key={post.id}
                   post={post}
-                  replyCount={replyCounts[post.id] || 0}
-                  onReplyCountIncrease={handleReplyCountIncrease}
+                  avgRating={ratings[post.id]?.avg ?? 0}
+                  ratingCount={ratings[post.id]?.count ?? 0}
+                  onRated={handleRated}
                 />
               ))}
             </AnimatePresence>
           )}
         </div>
+
+        {hidden.length > 0 && (
+          <div className="mt-3">
+            <button
+              onClick={() => setShowHidden(s => !s)}
+              className="flex items-center gap-2 text-[12px] text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 transition-colors"
+            >
+              {showHidden ? <Eye size={13} /> : <EyeOff size={13} />}
+              {showHidden ? 'Hide' : 'Show'} {hidden.length} low-rated {hidden.length === 1 ? 'post' : 'posts'} (under 3 stars)
+            </button>
+            <AnimatePresence>
+              {showHidden && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="mt-2 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 overflow-hidden shadow-sm opacity-60"
+                >
+                  {hidden.map(post => (
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      avgRating={ratings[post.id]?.avg ?? 0}
+                      ratingCount={ratings[post.id]?.count ?? 0}
+                      onRated={handleRated}
+                    />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         {!supabase && (
           <p className="text-center text-[13px] text-slate-400 mt-8">

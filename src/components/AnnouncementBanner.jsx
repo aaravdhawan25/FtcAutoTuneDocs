@@ -8,7 +8,7 @@ function Segment() {
       <span className="text-blue-400 text-[13px] mr-2 select-none">⚡</span>
       <span className="text-white font-semibold text-[12.5px] tracking-tight">Newly released</span>
       <span className="mx-3 inline-flex items-center h-[18px] px-2.5 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-300 text-[11px] font-bold tracking-wide">
-        v0.3.6
+        v0.3.7
       </span>
       <Dot />
       <span className="text-slate-400 text-[12px]">Relay-feedback PID/PIDF auto-tuning for FTC</span>

@@ -84,7 +84,7 @@ export function LibraryStructure({ id }) {
             ].map(({ id, desc }) => (
               <div key={id} className="rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 p-4 shadow-sm">
                 <code className="block font-mono text-[11.5px] text-blue-600 dark:text-blue-400 mb-2 leading-relaxed break-all">
-                  com.github.aaravdhawan25.FtcAutoTune:{id}:v0.3.6
+                  com.github.aaravdhawan25.FtcAutoTune:{id}:v0.3.7
                 </code>
                 <p className="text-[12.5px] text-slate-500 dark:text-slate-400">{desc}</p>
               </div>

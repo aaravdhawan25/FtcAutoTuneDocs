@@ -50,7 +50,7 @@ export function Hero({ id }) {
           <motion.div variants={up} className="flex justify-center mb-7">
             <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full text-[11.5px] font-medium text-blue-300 border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              v0.3.6 · Now on JitPack
+              v0.3.7 · Now on JitPack
             </span>
           </motion.div>
 

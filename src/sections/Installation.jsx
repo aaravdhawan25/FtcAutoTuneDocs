@@ -11,8 +11,8 @@ const REPOS_CODE = `repositories {
 
 const DEPS_CODE = `dependencies {
     // FTC-AutoTune — relay-feedback PID/PIDF auto tuner
-    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-core:v0.3.6'
-    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-ftc:v0.3.6'
+    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-core:v0.3.7'
+    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-ftc:v0.3.7'
 
     // Optional but recommended: FTC Dashboard for live telemetry
     implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {

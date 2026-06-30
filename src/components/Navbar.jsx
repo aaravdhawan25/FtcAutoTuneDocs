@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Menu, Github, Sun, Moon, Cpu, MessageSquare } from 'lucide-react'
+import { Menu, Github, Sun, Moon, MessageSquare } from 'lucide-react'
 import { useTheme, useNav } from '../context'
 
 const NAV_LINKS = [
@@ -51,16 +51,14 @@ export function Navbar({ onMenuClick }) {
             onClick={() => scrollTo('overview')}
             className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-500">
-              <Cpu size={14} className="text-white" strokeWidth={2.5} />
-            </span>
+            <img src="/logo.png" alt="FTC-AutoTune" className="h-7 w-7 rounded-md object-cover" />
             <span className="font-semibold text-[15px] text-slate-900 dark:text-white tracking-tight">
               FTC-AutoTune
             </span>
           </button>
 
           <span className="hidden sm:inline-flex items-center h-5 px-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-medium border border-slate-200 dark:border-slate-700 ml-1">
-            v0.3.6
+            v0.3.7
           </span>
         </div>
 

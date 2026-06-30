@@ -31,7 +31,7 @@ const FAQS = [
   },
   {
     q: 'The velocity tuner was jittering before. Is this fixed?',
-    a: <p>Yes, fixed in v0.3.6+. The root cause: PIDMaster was using raw {ci('getVelocity()')} without Math.abs. When the relay applied negative power, velocity briefly went negative, causing a massive error spike. DualMotorPIDMaster was always correct; PIDMaster now uses {ci('Math.abs(getVelocity())')} to match.</p>,
+    a: <p>Yes, fixed in v0.3.7+. The root cause: PIDMaster was using raw {ci('getVelocity()')} without Math.abs. When the relay applied negative power, velocity briefly went negative, causing a massive error spike. DualMotorPIDMaster was always correct; PIDMaster now uses {ci('Math.abs(getVelocity())')} to match.</p>,
   },
   {
     q: 'Do I need two encoders for the dual motor tuner?',
@@ -56,7 +56,7 @@ const FAQS = [
   {
     q: 'Which JitPack version should I use?',
     a: (
-      <p>Always use the latest release tag — currently <strong>v0.3.6</strong>. Check{' '}
+      <p>Always use the latest release tag — currently <strong>v0.3.7</strong>. Check{' '}
         <a href="https://jitpack.io/#aaravdhawan25/FtcAutoTune" target="_blank" rel="noopener noreferrer"
           className="text-blue-600 dark:text-blue-400 underline underline-offset-2 hover:text-blue-500">
           jitpack.io/#aaravdhawan25/FtcAutoTune

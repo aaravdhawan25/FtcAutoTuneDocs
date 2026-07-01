@@ -4,7 +4,7 @@ import { ArrowRight, Github, Zap, Settings, Layers } from 'lucide-react'
 
 const STATS = [
   { icon: <Layers size={16} />, value: '3 OpModes', sub: 'Position · Velocity · Dual' },
-  { icon: <Zap size={16} />, value: 'Zero Config', sub: 'Works with built-in defaults' },
+  { icon: <Zap size={16} />, value: 'Easy Configs', sub: 'Works with built-in defaults' },
   { icon: <Settings size={16} />, value: 'JitPack Ready', sub: 'Like Pedro Pathing' },
 ]
 
@@ -90,7 +90,7 @@ export function Hero({ id }) {
           className="text-[15px] sm:text-[16px] font-light text-white/60 mb-8 leading-relaxed"
         >
           Relay-feedback PID/PIDF auto-tuning for FTC.{' '}
-          <span className="text-white/90">Drop in two files, press start, get your gains.</span>
+          <span className="text-white/90">Drop in four files, press start, get your gains.</span>
         </motion.p>
 
         {/* CTAs */}

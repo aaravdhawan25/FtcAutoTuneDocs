@@ -90,7 +90,7 @@ export function Hero({ id }) {
           className="text-[15px] sm:text-[16px] font-light text-white/60 mb-8 leading-relaxed"
         >
           Relay-feedback PID/PIDF auto-tuning for FTC.{' '}
-          <span className="text-white/90">Drop in four files, press start, get your gains.</span>
+          <span className="text-white/90">Drop in four files, press start, get your PID(F) constants.</span>
         </motion.p>
 
         {/* CTAs */}

@@ -65,18 +65,13 @@ export function Hero({ id }) {
       {/* Main content — bottom-left */}
       <div className="absolute bottom-16 left-8 sm:left-14 z-20 max-w-2xl">
 
-        {/* Badge */}
-        <motion.div
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-7 border border-white/10 bg-white/5 backdrop-blur-sm relative"
-          style={{ filter: 'url(#hero-glass)' }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="absolute top-0 left-2 right-2 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent rounded-full" />
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-          <span className="text-white/90 text-[13px] font-medium tracking-wide">v0.3.6 · Now on JitPack</span>
-        </motion.div>
+          {/* Version badge */}
+          <motion.div variants={up} className="flex justify-center mb-7">
+            <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full text-[11.5px] font-medium text-blue-300 border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              v0.3.7 · Now on JitPack
+            </span>
+          </motion.div>
 
         {/* Heading */}
         <motion.div

@@ -1,4 +1,3 @@
-import { useRef, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { MeshGradient, PulsingBorder } from '@paper-design/shaders-react'
 import { ArrowRight, Github, Zap, Settings, Layers } from 'lucide-react'
@@ -11,78 +10,57 @@ const STATS = [
 
 const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
-export function Hero({ id }) {
-  const containerRef = useRef(null)
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (d = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: d, ease: [0.22, 1, 0.36, 1] } }),
+}
 
+export function Hero({ id }) {
   return (
-    <div ref={containerRef} className="relative min-h-[92vh] overflow-hidden bg-black">
+    <div className="relative bg-black" style={{ height: '92vh', minHeight: 540 }}>
 
       {/* SVG filters */}
-      <svg className="absolute inset-0 w-0 h-0" aria-hidden>
+      <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden>
         <defs>
-          <filter id="hero-glass" x="-50%" y="-50%" width="200%" height="200%">
-            <feTurbulence baseFrequency="0.005" numOctaves="1" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.3" />
-            <feColorMatrix type="matrix"
-              values="1 0 0 0 0.02  0 1 0 0 0.02  0 0 1 0 0.05  0 0 0 0.9 0"
-              result="tint"
-            />
-          </filter>
           <filter id="hero-text-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
-          <linearGradient id="hero-title-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="40%" stopColor="#06b6d4" />
-            <stop offset="100%" stopColor="#3b82f6" />
-          </linearGradient>
         </defs>
       </svg>
 
-      {/* Mesh gradient background */}
+      {/* Mesh gradient — explicit style dimensions so canvas sizes correctly */}
       <MeshGradient
-        className="absolute inset-0 w-full h-full"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         colors={['#000000', '#06b6d4', '#0891b2', '#1e3a5f', '#1d4ed8']}
         speed={0.25}
         backgroundColor="#000000"
-      />
-      {/* Wireframe overlay */}
-      <MeshGradient
-        className="absolute inset-0 w-full h-full opacity-40"
-        colors={['#000000', '#ffffff', '#06b6d4', '#3b82f6']}
-        speed={0.15}
-        wireframe="true"
-        backgroundColor="transparent"
       />
 
       {/* Scroll anchor */}
       <span id={id} className="absolute top-0" aria-hidden="true" />
 
-      {/* Main content — bottom-left */}
-      <div className="absolute bottom-16 left-8 sm:left-14 z-20 max-w-2xl">
+      {/* Content — bottom-left */}
+      <div className="absolute bottom-14 left-8 sm:left-14 z-20" style={{ maxWidth: '38rem' }}>
 
-          {/* Version badge */}
-          <motion.div variants={up} className="flex justify-center mb-7">
-            <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full text-[11.5px] font-medium text-blue-300 border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              v0.3.7 · Now on JitPack
-            </span>
-          </motion.div>
+        {/* Badge */}
+        <motion.div
+          custom={0.15} variants={fadeUp} initial="hidden" animate="visible"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 border border-white/10 bg-white/5 backdrop-blur-sm"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="text-white/85 text-[13px] font-medium tracking-wide">v0.3.7 · Now on JitPack</span>
+        </motion.div>
 
         {/* Heading */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className="mb-6 leading-none"
+          custom={0.3} variants={fadeUp} initial="hidden" animate="visible"
+          className="mb-5 leading-none"
         >
           <span
-            className="block text-[3rem] sm:text-[4.5rem] font-light tracking-widest uppercase mb-1"
+            className="block font-light tracking-widest uppercase"
             style={{
+              fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
               background: 'linear-gradient(135deg, #ffffff 0%, #06b6d4 50%, #3b82f6 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -93,21 +71,23 @@ export function Hero({ id }) {
             FTC
           </span>
           <span
-            className="block text-[4rem] sm:text-[6rem] font-black text-white drop-shadow-2xl leading-none tracking-tight"
+            className="block font-black text-white drop-shadow-2xl tracking-tight"
+            style={{ fontSize: 'clamp(3.5rem, 10vw, 6.5rem)', lineHeight: 1 }}
           >
             AutoTune
           </span>
-          <span className="block text-[1.4rem] sm:text-[1.8rem] font-light text-white/60 italic tracking-wider mt-1">
+          <span
+            className="block font-light text-white/55 italic tracking-wider mt-1"
+            style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)' }}
+          >
             Automatic PID Tuner
           </span>
         </motion.div>
 
         {/* Subtitle */}
         <motion.p
-          className="text-[15px] sm:text-[17px] font-light text-white/65 mb-9 leading-relaxed max-w-lg"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          custom={0.5} variants={fadeUp} initial="hidden" animate="visible"
+          className="text-[15px] sm:text-[16px] font-light text-white/60 mb-8 leading-relaxed"
         >
           Relay-feedback PID/PIDF auto-tuning for FTC.{' '}
           <span className="text-white/90">Drop in two files, press start, get your gains.</span>
@@ -115,14 +95,13 @@ export function Hero({ id }) {
 
         {/* CTAs */}
         <motion.div
-          className="flex items-center gap-4 flex-wrap mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.75 }}
+          custom={0.65} variants={fadeUp} initial="hidden" animate="visible"
+          className="flex items-center gap-4 flex-wrap mb-8"
         >
           <motion.button
             onClick={() => scrollTo('installation')}
-            className="px-8 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-[13px] flex items-center gap-2 shadow-lg hover:shadow-cyan-500/30 hover:from-cyan-400 hover:to-blue-500 transition-all duration-300 cursor-pointer"
+            className="px-8 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-[13px] flex items-center gap-2 cursor-pointer"
+            style={{ boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
           >
@@ -132,7 +111,7 @@ export function Hero({ id }) {
             href="https://github.com/aaravdhawan25/FtcAutoTune"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-3.5 rounded-full border-2 border-white/25 text-white/80 font-medium text-[13px] flex items-center gap-2 hover:bg-white/10 hover:border-white/40 hover:text-white transition-all duration-300 backdrop-blur-sm"
+            className="px-8 py-3.5 rounded-full border-2 border-white/20 text-white/75 font-medium text-[13px] flex items-center gap-2 hover:bg-white/10 hover:text-white transition-colors backdrop-blur-sm"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
           >
@@ -140,19 +119,15 @@ export function Hero({ id }) {
           </motion.a>
         </motion.div>
 
-        {/* Stat cards */}
+        {/* Stat pills */}
         <motion.div
+          custom={0.8} variants={fadeUp} initial="hidden" animate="visible"
           className="flex gap-3 flex-wrap"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
         >
           {STATS.map(({ icon, value, sub }) => (
-            <motion.div
+            <div
               key={value}
-              whileHover={{ y: -3 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl backdrop-blur-md"
+              className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl backdrop-blur-md"
               style={{
                 background: 'linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03))',
                 boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.1)',
@@ -161,16 +136,16 @@ export function Hero({ id }) {
               <span className="text-cyan-400 flex-shrink-0">{icon}</span>
               <div>
                 <p className="text-white font-semibold text-[12px] leading-tight">{value}</p>
-                <p className="text-white/45 text-[11px]">{sub}</p>
+                <p className="text-white/40 text-[10px]">{sub}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
       </div>
 
-      {/* Pulsing border decoration — bottom right */}
+      {/* Pulsing border — bottom right */}
       <div className="absolute bottom-10 right-10 z-20">
-        <div className="relative w-20 h-20 flex items-center justify-center">
+        <div className="relative flex items-center justify-center" style={{ width: 80, height: 80 }}>
           <PulsingBorder
             colors={['#06b6d4', '#0891b2', '#3b82f6', '#1d4ed8', '#ffffff']}
             colorBack="#00000000"
@@ -185,7 +160,7 @@ export function Hero({ id }) {
             smoke={0.5}
             smokeSize={4}
             scale={0.65}
-            style={{ width: '60px', height: '60px', borderRadius: '50%' }}
+            style={{ width: 60, height: 60, borderRadius: '50%' }}
           />
           <motion.svg
             className="absolute inset-0 w-full h-full"
@@ -197,17 +172,20 @@ export function Hero({ id }) {
             <defs>
               <path id="hero-circle" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" />
             </defs>
-            <text style={{ fontSize: 7, fill: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
+            <text style={{ fontSize: 7, fill: 'rgba(255,255,255,0.65)', fontWeight: 500 }}>
               <textPath href="#hero-circle" startOffset="0%">
-                FTC-AutoTune · Relay PID · v0.3.6 · JitPack ·
+                FTC-AutoTune · Relay PID · v0.3.7 · JitPack ·
               </textPath>
             </text>
           </motion.svg>
         </div>
       </div>
 
-      {/* Fade to page */}
-      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b from-transparent to-slate-50 dark:to-slate-950 pointer-events-none z-10" />
+      {/* Fade to next section */}
+      <div
+        className="absolute bottom-0 inset-x-0 pointer-events-none z-10"
+        style={{ height: 120, background: 'linear-gradient(to bottom, transparent, #0f172a)' }}
+      />
     </div>
   )
 }

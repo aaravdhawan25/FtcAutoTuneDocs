@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Menu, Github, Sun, Moon, MessageSquare } from 'lucide-react'
+import { Menu, Github, Youtube, Sun, Moon, MessageSquare } from 'lucide-react'
 import { useTheme, useNav } from '../context'
 
 const NAV_LINKS = [
@@ -92,6 +92,15 @@ export function Navbar({ onMenuClick }) {
             className="p-1.5 rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <Github size={17} />
+          </a>
+          <a
+            href="https://www.youtube.com/@FTC-AutoTune"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+            className="p-1.5 rounded-md text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+          >
+            <Youtube size={17} />
           </a>
 
           <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1" />

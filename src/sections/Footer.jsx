@@ -23,7 +23,7 @@ export function Footer() {
               <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.1em]">YouTube Channel</p>
             </div>
             <p className="text-[16px] font-bold text-slate-900 dark:text-white leading-tight truncate">FTC-AutoTune</p>
-            <p className="text-[12.5px] text-slate-500 dark:text-slate-500 mt-0.5">Setup walkthroughs, tuning demos &amp; robot builds</p>
+            <p className="text-[12.5px] text-slate-500 dark:text-slate-500 mt-0.5">Setup walkthroughs &amp tuning demos; </p>
           </div>
           <span className="hidden sm:inline-flex flex-shrink-0 items-center gap-1.5 h-8 px-4 rounded-full bg-red-600 group-hover:bg-red-500 text-white text-[12.5px] font-semibold transition-colors">
             Subscribe <ExternalLink size={11} />

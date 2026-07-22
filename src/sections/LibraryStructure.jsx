@@ -13,10 +13,10 @@ const LIB = [
 ]
 
 const QS = [
-  { name: 'TuningConfig.java', desc: '@Config annotated — all tuning constants in one place.' },
-  { name: 'VelocityPIDFTunerOpMode.java', desc: 'TeleOp wrapper for single-motor velocity tuning.' },
-  { name: 'PositionPIDTunerOpMode.java', desc: 'TeleOp wrapper for position/arm/lift tuning.' },
-  { name: 'DualMotorVelocityPIDFTunerOpMode.java', desc: 'TeleOp wrapper for dual-motor shooters.' },
+  { name: 'TuningConfig', desc: '@Config annotated — all tuning constants in one place.' },
+  { name: 'VelocityPIDFTunerOpMode', desc: 'TeleOp wrapper for single-motor velocity tuning.' },
+  { name: 'PositionPIDTunerOpMode', desc: 'TeleOp wrapper for position/arm/lift tuning.' },
+  { name: 'DualMotorVelocityPIDFTuner', desc: 'TeleOp wrapper for dual-motor shooters.' },
 ]
 
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.05 } } }

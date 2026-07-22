@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { label: 'Install', href: 'installation' },
   { label: 'Configure', href: 'configuration' },
   { label: 'Tuning', href: 'tuning-guides' },
-  { label: 'API', href: 'library-structure' },
+  { label: 'About', href: 'library-structure' },
   { label: 'FAQ', href: 'faq' },
 ]
 

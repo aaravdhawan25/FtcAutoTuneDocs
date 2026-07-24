@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import { ThemeContext, NavContext } from './context'
 import { useActiveSection } from './hooks/useActiveSection'
 import { Navbar } from './components/Navbar'
@@ -42,6 +43,7 @@ export default function App() {
       <ThemeContext.Provider value={{ isDark, toggle: () => setIsDark(d => !d) }}>
         <NavContext.Provider value={{ navigate }}>
           <Analytics />
+          <SpeedInsights />
           <ForumPage />
         </NavContext.Provider>
       </ThemeContext.Provider>
@@ -53,6 +55,7 @@ export default function App() {
       <NavContext.Provider value={{ navigate }}>
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
           <Analytics />
+          <SpeedInsights />
           <AnnouncementBanner />
           <Navbar onMenuClick={() => setSidebarOpen(o => !o)} />
           {sidebarOpen && (

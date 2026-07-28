@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useNav } from '../context'
 
 const SECTIONS = [
   { id: 'overview', label: 'Overview' },
@@ -38,9 +39,9 @@ function NavItem({ id, label, isActive, onClick }) {
 }
 
 export function Sidebar({ activeSection, isOpen, onNavClick }) {
+  const { navigate } = useNav()
   const scrollTo = (id) => {
-    const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    navigate(id)
     onNavClick?.()
   }
 

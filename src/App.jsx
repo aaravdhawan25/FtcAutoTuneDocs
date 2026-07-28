@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import { ThemeContext, NavContext } from './context'
 import { useActiveSection } from './hooks/useActiveSection'
+import { pathToSegment, pushPath } from './lib/router'
 import { Navbar } from './components/Navbar'
 import { Sidebar } from './components/Sidebar'
 import { AnnouncementBanner } from './components/AnnouncementBanner'
@@ -28,7 +29,7 @@ const SECTION_IDS = [
 export default function App() {
   const [isDark, setIsDark] = useState(() => localStorage.getItem('theme') !== 'light')
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [page, setPage] = useState('docs')
+  const [page, setPage] = useState(() => (pathToSegment(window.location.pathname) === 'forum' ? 'forum' : 'docs'))
   const activeSection = useActiveSection(SECTION_IDS)
 
   useEffect(() => {
@@ -36,7 +37,53 @@ export default function App() {
     document.documentElement.classList.toggle('dark', isDark)
   }, [isDark])
 
-  const navigate = (p) => { setPage(p); window.scrollTo(0, 0) }
+  // Scroll to the section named in the URL once on first mount (deep link / refresh)
+  useEffect(() => {
+    const seg = pathToSegment(window.location.pathname)
+    if (seg && seg !== 'forum' && SECTION_IDS.includes(seg)) {
+      requestAnimationFrame(() => document.getElementById(seg)?.scrollIntoView({ behavior: 'auto' }))
+    }
+  }, [])
+
+  // Keep state in sync with browser back/forward
+  useEffect(() => {
+    const onPopState = () => {
+      const seg = pathToSegment(window.location.pathname)
+      if (seg === 'forum') {
+        setPage('forum')
+      } else {
+        setPage('docs')
+        requestAnimationFrame(() => {
+          document.getElementById(seg || 'overview')?.scrollIntoView({ behavior: 'auto' })
+        })
+      }
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  const navigate = (target) => {
+    if (target === 'forum') {
+      setPage('forum')
+      pushPath('forum')
+      window.scrollTo(0, 0)
+      return
+    }
+    if (target === 'docs') {
+      setPage('docs')
+      pushPath('docs')
+      window.scrollTo(0, 0)
+      return
+    }
+    // Section id — jump to docs page (if needed) then scroll to the anchor
+    if (page !== 'docs') {
+      setPage('docs')
+      requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' }))
+    } else {
+      document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+    }
+    pushPath(target)
+  }
 
   if (page === 'forum') {
     return (

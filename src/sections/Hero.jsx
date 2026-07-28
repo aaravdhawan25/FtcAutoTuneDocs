@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { MeshGradient, PulsingBorder } from '@paper-design/shaders-react'
 import { ArrowRight, Github, Zap, Settings, Layers } from 'lucide-react'
+import { useNav } from '../context'
 
 const STATS = [
   { icon: <Layers size={16} />, value: '3 OpModes', sub: 'Position · Velocity · Dual' },
@@ -8,14 +9,13 @@ const STATS = [
   { icon: <Settings size={16} />, value: 'JitPack Ready', sub: 'Like Pedro Pathing' },
 ]
 
-const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: (d = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: d, ease: [0.22, 1, 0.36, 1] } }),
 }
 
 export function Hero({ id }) {
+  const { navigate } = useNav()
   return (
     <div className="relative bg-black" style={{ height: '92vh', minHeight: 540 }}>
 
@@ -99,7 +99,7 @@ export function Hero({ id }) {
           className="flex items-center gap-4 flex-wrap mb-8"
         >
           <motion.button
-            onClick={() => scrollTo('installation')}
+            onClick={() => navigate('installation')}
             className="px-8 py-3.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-[13px] flex items-center gap-2 cursor-pointer"
             style={{ boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
             whileHover={{ scale: 1.05 }}

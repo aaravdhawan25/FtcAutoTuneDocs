@@ -1,8 +1,8 @@
 import { Github, Cpu, ExternalLink, Youtube, Play } from 'lucide-react'
-
-const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+import { useNav } from '../context'
 
 export function Footer() {
+  const { navigate } = useNav()
   return (
     <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
       <div className="max-w-5xl mx-auto px-6 py-14">
@@ -87,7 +87,7 @@ export function Footer() {
             <p className="text-[10.5px] font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-[0.12em] mb-3">Quick Nav</p>
             <div className="flex flex-col gap-2">
               {['overview', 'installation', 'tuning-guides', 'faq'].map(s => (
-                <button key={s} onClick={() => scrollTo(s)}
+                <button key={s} onClick={() => navigate(s)}
                   className="text-left text-[13px] text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors capitalize w-fit">
                   {s.replace(/-/g, ' ')}
                 </button>

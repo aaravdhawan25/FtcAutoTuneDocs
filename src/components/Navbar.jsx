@@ -22,11 +22,6 @@ export function Navbar({ onMenuClick }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const scrollTo = (id) => {
-    const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
     <header
       className={`fixed inset-x-0 top-9 z-40 h-14 flex items-center transition-all duration-200 ${
@@ -48,7 +43,7 @@ export function Navbar({ onMenuClick }) {
           </button>
 
           <button
-            onClick={() => scrollTo('overview')}
+            onClick={() => navigate('overview')}
             className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
           >
             <img src="/logo.png" alt="FTC-AutoTune" className="h-7 w-7 rounded-md object-cover" />
@@ -67,7 +62,7 @@ export function Navbar({ onMenuClick }) {
           {NAV_LINKS.map(({ label, href }) => (
             <button
               key={label}
-              onClick={() => scrollTo(href)}
+              onClick={() => navigate(href)}
               className="px-3 py-1.5 text-[13.5px] font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors duration-150"
             >
               {label}

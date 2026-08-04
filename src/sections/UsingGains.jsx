@@ -3,24 +3,40 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { CodeBlock } from '../components/CodeBlock'
 import { Info } from 'lucide-react'
 
-const VEL = `// In your subsystem — paste the gains from telemetry
-private static final double kP = 0.00312;
-private static final double kD = 0.00089;
-private static final double kF = 0.000478;
+const VEL = `// This pattern works best for velocity/flywheel PIDF — the feedforward
+// term scales directly with the target RPM, so it carries almost all of
+// the steady-state effort and the PID term only has to correct the
+// remaining error. That's what makes it hold speed under load far
+// better than PID alone.
 
-private final PIDFController controller = new PIDFController(kP, 0, kD, kF);
-
-public void setFlywheelVelocity(double targetTicksPerSec) {
-    controller.setOutputBounds(0.0, 1.0);
-    // Always use Math.abs — matches the relay test measurement
-    double measurement = Math.abs(motor.getVelocity());
-    double output = controller.calculate(targetTicksPerSec, measurement, timer.seconds());
-    motor.setPower(output);
+// Converts raw encoder ticks/sec into RPM so gains and readouts stay
+// in a more intuitive unit than ticks/sec.
+public double toRPM(double tps) {
+    return tps * 60.0 / ShooterConstants.TICKS_PER_REV;
 }
 
-// Call when target changes to avoid windup on setpoint jumps
-public void resetController() {
-    controller.reset();
+public void setShooterPID(double rpm) {
+    // Math.abs matches the relay test's measurement convention —
+    // getVelocity() can briefly read negative during oscillation.
+    double velocity = Math.abs(shooterOne.getVelocity());
+    double currentRPM = toRPM(velocity);
+
+    // Paste kP/kI/kD/kF straight from your chosen tuning candidate.
+    shooterController.setPID(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD);
+
+    // PID handles the error between current and target RPM.
+    double power = shooterController.calculate(currentRPM, rpm);
+
+    // Feedforward scales linearly with rpm / MAX_RPM — this is what
+    // turns a plain PID loop into a true PIDF loop.
+    power += (rpm > 0) ? (ShooterConstants.kF * (rpm / ShooterConstants.MAX_RPM)) : 0.0;
+
+    // Flywheels are unidirectional — clip to a valid one-sided power range.
+    power = Range.clip(power, 0, 1);
+
+    // Both motors on a dual-motor shooter get the same power.
+    shooterOne.setPower(power);
+    shooterTwo.setPower(power);
 }`
 
 const POS = `private static final double kP = 0.0089;

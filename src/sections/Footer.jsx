@@ -1,5 +1,6 @@
 import { Github, Cpu, ExternalLink, Youtube, Play } from 'lucide-react'
 import { useNav } from '../context'
+import { DiscordIcon } from '../components/DiscordIcon'
 
 export function Footer() {
   const { navigate } = useNav()
@@ -7,28 +8,50 @@ export function Footer() {
     <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
       <div className="max-w-5xl mx-auto px-6 py-14">
 
-        {/* YouTube channel preview */}
-        <a
-          href="https://www.youtube.com/@FTC-AutoTune"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-4 mb-12 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 hover:border-red-400/40 dark:hover:border-red-500/30 hover:bg-red-50/50 dark:hover:bg-red-500/[0.04] transition-colors"
-        >
-          <div className="relative flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-sm">
-            <Play size={22} className="text-white fill-white ml-0.5" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <Youtube size={14} className="text-red-500 flex-shrink-0" />
-              <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.1em]">YouTube Channel</p>
+        {/* Community: YouTube + Discord */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+          <a
+            href="https://www.youtube.com/@FTC-AutoTune"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-4 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 hover:border-red-400/40 dark:hover:border-red-500/30 hover:bg-red-50/50 dark:hover:bg-red-500/[0.04] transition-colors"
+          >
+            <div className="relative flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-sm">
+              <Play size={22} className="text-white fill-white ml-0.5" />
             </div>
-            <p className="text-[16px] font-bold text-slate-900 dark:text-white leading-tight truncate">FTC-AutoTune</p>
-            <p className="text-[12.5px] text-slate-500 dark:text-slate-500 mt-0.5">Setup walkthroughs &amp; tuning demos </p>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Youtube size={14} className="text-red-500 flex-shrink-0" />
+                <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.1em]">YouTube Channel</p>
+              </div>
+              <p className="text-[16px] font-bold text-slate-900 dark:text-white leading-tight truncate">FTC-AutoTune</p>
+              <p className="text-[12.5px] text-slate-500 dark:text-slate-500 mt-0.5">Setup walkthroughs &amp; tuning demos</p>
+            </div>
+          </a>
+
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-4 sm:p-5">
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <DiscordIcon size={14} className="text-indigo-400 flex-shrink-0" />
+              <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.1em]">Community</p>
+            </div>
+            <p className="text-[16px] font-bold text-slate-900 dark:text-white leading-tight mb-1">Join the Discord</p>
+            <p className="text-[12.5px] text-slate-500 dark:text-slate-500 mb-3 leading-relaxed">
+              Live tuning help, config sharing, and release announcements.
+            </p>
+            <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 mx-auto" style={{ maxWidth: 350 }}>
+              <iframe
+                src="https://discord.com/widget?id=1534374928378495157&theme=dark"
+                width="350"
+                height="350"
+                frameBorder="0"
+                sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+                loading="lazy"
+                title="FTC-AutoTune Discord server widget"
+                style={{ width: '100%', maxWidth: 350, display: 'block' }}
+              />
+            </div>
           </div>
-          <span className="hidden sm:inline-flex flex-shrink-0 items-center gap-1.5 h-8 px-4 rounded-full bg-red-600 group-hover:bg-red-500 text-white text-[12.5px] font-semibold transition-colors">
-            Subscribe <ExternalLink size={11} />
-          </span>
-        </a>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
 

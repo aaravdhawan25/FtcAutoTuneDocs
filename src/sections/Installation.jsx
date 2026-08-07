@@ -10,8 +10,8 @@ const REPOS_CODE = `repositories {
 
 const DEPS_CODE = `dependencies {
     // FTC-AutoTune — relay-feedback PID/PIDF auto tuner
-    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-core:v1.4.3'
-    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-ftc:v1.4.3'
+    implementation 'dev.ftcautotune.FtcAutoTune:pidautotuner-core:v1.4.3'
+    implementation 'dev.ftcautotune.FtcAutoTune:pidautotuner-ftc:v1.4.3'
 }`
 
 const FILES = [

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ExternalLink, MonitorDot, LayoutDashboard, Info } from 'lucide-react'
+import { ExternalLink, MonitorDot, Info } from 'lucide-react'
 
 function ExtLink({ href, children }) {
   return (
@@ -67,14 +67,14 @@ implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
             </div>
           </motion.div>
 
-          {/* Panels */}
+          {/* Panels / Pulse */}
           <motion.div variants={fadeUp} whileHover={{ y: -3 }} transition={{ type: 'spring', stiffness: 350, damping: 25 }} className="card p-6 flex flex-col gap-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center flex-shrink-0">
                 <MonitorDot size={19} className="text-orange-500" />
               </div>
               <div>
-                <p className="font-semibold text-[15px] text-slate-900 dark:text-white leading-tight">Pulse(Beta)</p>
+                <p className="font-semibold text-[15px] text-slate-900 dark:text-white leading-tight">Pulse (Beta)</p>
                 <p className="text-[12px] text-slate-400 dark:text-slate-500">by aaravdhawan25</p>
               </div>
             </div>
@@ -86,9 +86,11 @@ implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
 
             <div className="rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-950 overflow-hidden">
               <div className="px-3 py-2 border-b border-white/5 bg-[#16162a]">
-                <span className="text-[10.5px] font-mono text-slate-500">Automatically installed with FTC-AutoTune</span>
+                <span className="text-[10.5px] font-mono text-slate-500">Info</span>
               </div>
-          
+              <div className="p-4">
+                <span className="text-[12px] font-mono text-slate-300">Automatically installed with FTC-AutoTune</span>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-4 mt-auto pt-1">
@@ -97,6 +99,7 @@ implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
             </div>
           </motion.div>
 
+        </motion.div>
 
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
           className="mt-5 text-[13px] text-slate-500 dark:text-slate-500 px-1">

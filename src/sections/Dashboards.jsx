@@ -45,7 +45,7 @@ export function Dashboards({ id }) {
 
             <p className="text-[13.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
               The classic FTC telemetry dashboard. Live graphs, field view, and{' '}
-              <code className="ci">@Config</code> variable tuning without redeploying.
+              <code className="ci">@AutoTuneDash</code> variable tuning without redeploying.
             </p>
 
             <div className="rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-950 overflow-hidden">

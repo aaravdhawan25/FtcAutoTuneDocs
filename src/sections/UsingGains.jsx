@@ -21,18 +21,14 @@ public void setShooterPID(double rpm) {
     double velocity = Math.abs(shooterOne.getVelocity());
     double currentRPM = toRPM(velocity);
 
+    shooterController.setOutputBounds(0.0, 1);
+
     // Paste kP/kI/kD/kF straight from your chosen tuning candidate.
-    shooterController.setPID(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD);
+    shooterController.setPIDF(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD, ShooterConstants.kF);
 
     // PID handles the error between current and target RPM.
     double power = shooterController.calculate(currentRPM, rpm);
-
-    // Feedforward scales linearly with rpm / MAX_RPM — this is what
-    // turns a plain PID loop into a true PIDF loop.
-    power += (rpm > 0) ? (ShooterConstants.kF * (rpm / ShooterConstants.MAX_RPM)) : 0.0;
-
-    // Flywheels are unidirectional — clip to a valid one-sided power range.
-    power = Range.clip(power, 0, 1);
+    
 
     // Both motors on a dual-motor shooter get the same power.
     shooterOne.setPower(power);

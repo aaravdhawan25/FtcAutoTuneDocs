@@ -6,18 +6,12 @@ const REPOS_CODE = `repositories {
     mavenCentral()
     google()
     maven { url = 'https://jitpack.io' }
-    maven { url = 'https://maven.brott.dev/' }  // for FTC Dashboard
 }`
 
 const DEPS_CODE = `dependencies {
     // FTC-AutoTune — relay-feedback PID/PIDF auto tuner
-    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-core:v0.3.7'
-    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-ftc:v0.3.7'
-
-    // Optional but recommended: FTC Dashboard for live telemetry
-    implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
-        exclude group: 'org.firstinspires.ftc'
-    }
+    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-core:v1.4.3'
+    implementation 'com.github.aaravdhawan25.FtcAutoTune:pidautotuner-ftc:v1.4.3'
 }`
 
 const FILES = [

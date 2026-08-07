@@ -70,31 +70,33 @@ implementation('com.acmerobotics.dashboard:dashboard:0.4.16') {
           {/* Panels */}
           <motion.div variants={fadeUp} whileHover={{ y: -3 }} transition={{ type: 'spring', stiffness: 350, damping: 25 }} className="card p-6 flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center flex-shrink-0">
-                <LayoutDashboard size={19} className="text-violet-500" />
+              <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                <MonitorDot size={19} className="text-orange-500" />
               </div>
               <div>
-                <p className="font-semibold text-[15px] text-slate-900 dark:text-white leading-tight">Panels</p>
-                <p className="text-[12px] text-slate-400 dark:text-slate-500">by bylazar / FTControl</p>
+                <p className="font-semibold text-[15px] text-slate-900 dark:text-white leading-tight">Pulse(Beta)</p>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500">by aaravdhawan25</p>
               </div>
             </div>
 
             <p className="text-[13.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
-              All-in-one dashboard with OpMode control, live graphing, and PWA install. Runs in any browser — phone or laptop.
+              A live Telemetry Dashboard optimized for FTC-AutoTune. Live graphs, field view, and{' '}
+              <code className="ci">@Config</code> variable tuning without redeploying.
             </p>
 
-            <div className="flex-1 flex items-center rounded-lg border border-violet-200 dark:border-violet-800/40 bg-violet-50 dark:bg-violet-950/20 p-4">
-              <p className="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                No Gradle dependency needed — Panels connects over Wi-Fi using FTControl's companion app on the Robot Controller.
-              </p>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-950 overflow-hidden">
+              <div className="px-3 py-2 border-b border-white/5 bg-[#16162a]">
+                <span className="text-[10.5px] font-mono text-slate-500">Automatically installed with FTC-AutoTune</span>
+              </div>
+          
             </div>
 
             <div className="flex flex-wrap gap-4 mt-auto pt-1">
-              <ExtLink href="https://panels.bylazar.com/">panels.bylazar.com</ExtLink>
-              <ExtLink href="https://ftcontrol.bylazar.com/docs/overview/">Docs</ExtLink>
+              <ExtLink href="https://github.com/aaravdhawan25/PulseDocs">GitHub</ExtLink>
+              <ExtLink href="https://pulse.ftcautotune.dev">Docs</ExtLink>
             </div>
           </motion.div>
-        </motion.div>
+
 
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
           className="mt-5 text-[13px] text-slate-500 dark:text-slate-500 px-1">

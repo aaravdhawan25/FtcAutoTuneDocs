@@ -43,7 +43,7 @@ private final PIDFController controller = new PIDFController(kP, 0, kD, 0);
 public void setArmPosition(int targetTicks) {
     controller.setOutputBounds(-1.0, 1.0);
     double output = controller.calculate(
-        targetTicks, motor.getCurrentPosition(), timer.seconds()
+        targetTicks, motor.getCurrentPosition()
     );
     motor.setPower(output);
 }`
